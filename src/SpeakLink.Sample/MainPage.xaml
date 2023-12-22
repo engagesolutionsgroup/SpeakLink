@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sample="clr-namespace:SpeakLink.Sample"
+             xmlns:mention="clr-namespace:SpeakLink.Mention;assembly=SpeakLink"
+             x:Class="SpeakLink.Sample.MainPage"
+             x:DataType="sample:MentionsViewModel">
+    <ContentPage.BindingContext>
+        <sample:MentionsViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="*,Auto,Auto">
+        <Grid Grid.Row="1" MinimumHeightRequest="200" Margin="8">
+            <VerticalStackLayout HorizontalOptions="Start"
+                                   VerticalOptions="Start">
+                <Label Text="Formatted TextBinding Label Below" FontSize="10" />
+                <Label
+                FormattedText="{x:Binding FormattedString}"
+                FontFamily="OpenSansRegular"
+                FontSize="14"
+                TextColor="#FFF"
+              
+                HorizontalTextAlignment="Start"
+                VerticalTextAlignment="Start" />
+            </VerticalStackLayout>
+     
+            <Border VerticalOptions="End" HorizontalOptions="Fill" HeightRequest="177" StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
+                    IsVisible="{Binding IsDisplayingMentions}">
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Offset="1,1"
+                            Opacity="0.4" />
+                </Border.Shadow>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16,16,0,0" />
+                </Border.StrokeShape>
+                <CollectionView ItemsSource="{x:Binding MentionUsers}"
+                                SelectionMode="Single"
+                                SelectionChanged="SelectableItemsView_OnSelectionChanged"
+                                Margin="0,0,0,1">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="sample:User">
+                            <Grid Height="44">
+                                <Grid Padding="8,4" HeightRequest="44">
+                                    <Border StrokeThickness="0"
+                                            HorizontalOptions="Start"
+                                            HeightRequest="32"
+                                            WidthRequest="32">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="16" />
+                                        </Border.StrokeShape>
+                                        <Image Source="{x:Binding ImageUrl}"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center" />
+                                    </Border>
+                                    <Label Text="{x:Binding FullName}" Margin="44,0,0,0" />
+                                </Grid>
+                                <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
+                                      BackgroundColor="LightGray"
+                                      VerticalOptions="End"
+                                      HorizontalOptions="Fill" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
+                  BackgroundColor="LightGray"
+                  VerticalOptions="End"
+                  HorizontalOptions="Fill" />
+            <Grid Margin="0,1,0,0">
+                <mention:MentionEditor
+                    Grid.Column="0"
+                    x:Name="MentionEditor"
+                    FontSize="18"
+                    FontFamily="OpenSansRegular"
+                    MentionSearchCommand="{x:Binding MentionSearchCommand}"
+                    IsSuggestionsPopupVisible="{x:Binding IsDisplayingMentions}"
+                    ExplicitCharacters="@"
+                    TextColor="Black"
+                    MentionTextColor="Red"
+                    PlaceholderText="To mention someone type @"
+                    MentionSelectedBackgroundColor="DodgerBlue"
+                    MentionSelectedTextColor="Fuchsia"
+                    AutoSize="TextChanges"
+                    FormattedText="{x:Binding FormattedString}"
+                    AutomationId="Mention" />
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>
