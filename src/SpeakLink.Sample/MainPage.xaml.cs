@@ -12,6 +12,5 @@ public partial class MainPage : ContentPage
         if (e.CurrentSelection.FirstOrDefault() is User user)
             MentionEditor.InsertMention(user.Id.ToString(), user.FullName);
         (sender as CollectionView).SelectedItem = null;
-
     }
 }
