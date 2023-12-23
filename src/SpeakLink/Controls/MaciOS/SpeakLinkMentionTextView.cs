@@ -198,7 +198,7 @@ public class SpeakLinkMentionTextView : HKWTextView
             OnMentionSearch = SendOnMentionSearch 
         };
 
-        _stateChangeDelegate = new MentionsHkwMentionsStateChangeDelegate(SendOnDisplaySuggestionsChanged);
+        _stateChangeDelegate = new MentionsHkwMentionsStateChangeDelegate(SendOnDisplaySuggestionsChanged, OnMentionDeleted);
        
         _mentionsPlugin.CustomChooserViewDelegate = _chooserViewDelegate;
         _mentionsPlugin.StateChangeDelegate = _stateChangeDelegate;
@@ -206,6 +206,9 @@ public class SpeakLinkMentionTextView : HKWTextView
         ControlFlowPlugin = _mentionsPlugin;
         WeakExternalDelegate = new MentionsSimpleTextViewDelegate(OnTextChangedDelegate);
     }
+
+    private void OnMentionDeleted(HKWMentionsPlugin arg1, HKWMentionsEntityProtocol arg2)
+        => OnTextChangedDelegate(null, Text);
 
     internal void OnTextChangedDelegate(string? oldValue, string? newValue)
     {

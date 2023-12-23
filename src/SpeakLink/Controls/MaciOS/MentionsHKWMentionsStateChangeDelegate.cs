@@ -6,9 +6,11 @@ namespace SpeakLink.Controls.MaciOS;
 
 public class MentionsHkwMentionsStateChangeDelegate : HKWMentionsStateChangeDelegate
 {
-    public MentionsHkwMentionsStateChangeDelegate(Action<bool>? sendOnDisplaySuggestionsChanged)
+    public MentionsHkwMentionsStateChangeDelegate(Action<bool>? sendOnDisplaySuggestionsChanged,
+        Action<HKWMentionsPlugin, HKWMentionsEntityProtocol>? mentionDeleted)
     {
         SendOnDisplaySuggestionsChanged = sendOnDisplaySuggestionsChanged;
+        MentionDeleted = mentionDeleted;
     }
 
     protected MentionsHkwMentionsStateChangeDelegate(NSObjectFlag t) : base(t)
@@ -38,6 +40,8 @@ public class MentionsHkwMentionsStateChangeDelegate : HKWMentionsStateChangeDele
         base.DeletedMention(plugin, entity, location);
         SendOnDisplaySuggestionsChanged?.Invoke(false);
         IsDisplaying = false;
+        
+        MentionDeleted?.Invoke(plugin, entity);
     }
 
     public override void  MentionsPluginWillActivateChooserView(HKWMentionsPlugin plugin)
@@ -59,5 +63,6 @@ public class MentionsHkwMentionsStateChangeDelegate : HKWMentionsStateChangeDele
     }
 
     public Action<bool>? SendOnDisplaySuggestionsChanged { get; set; }
+    public Action<HKWMentionsPlugin, HKWMentionsEntityProtocol>? MentionDeleted { get; set; }
     public bool IsDisplaying { get; set; }
 }
