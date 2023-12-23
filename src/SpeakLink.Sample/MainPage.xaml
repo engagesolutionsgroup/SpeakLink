@@ -13,18 +13,18 @@
     <Grid RowDefinitions="*,Auto,Auto">
         <Grid Grid.Row="1" MinimumHeightRequest="200" Margin="8">
             <VerticalStackLayout HorizontalOptions="Start"
-                                   VerticalOptions="Start">
+                                 VerticalOptions="Start"
+                                 Spacing="20">
                 <Label Text="Formatted TextBinding Label Below" FontSize="10" />
                 <Label
-                FormattedText="{x:Binding FormattedString}"
-                FontFamily="OpenSansRegular"
-                FontSize="14"
-                TextColor="#FFF"
-              
-                HorizontalTextAlignment="Start"
-                VerticalTextAlignment="Start" />
+                    FormattedText="{x:Binding FormattedString}"
+                    FontFamily="OpenSansRegular"
+                    FontSize="14"
+                    TextColor="Black"
+                    HorizontalTextAlignment="Start"
+                    VerticalTextAlignment="Start" />
             </VerticalStackLayout>
-     
+
             <Border VerticalOptions="End" HorizontalOptions="Fill" HeightRequest="177" StrokeThickness="0"
                     BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
                     IsVisible="{Binding IsDisplayingMentions}">
@@ -42,7 +42,7 @@
                                 Margin="0,0,0,1">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="sample:User">
-                            <Grid Height="44">
+                            <Grid HeightRequest="44">
                                 <Grid Padding="8,4" HeightRequest="44">
                                     <Border StrokeThickness="0"
                                             HorizontalOptions="Start"
@@ -82,10 +82,10 @@
                     IsSuggestionsPopupVisible="{x:Binding IsDisplayingMentions}"
                     ExplicitCharacters="@"
                     TextColor="Black"
-                    MentionTextColor="Red"
+                    MentionTextColor="DodgerBlue"
                     PlaceholderText="To mention someone type @"
-                    MentionSelectedBackgroundColor="DodgerBlue"
-                    MentionSelectedTextColor="Fuchsia"
+                    MentionSelectedBackgroundColor="Blue"
+                    MentionSelectedTextColor="White"
                     AutoSize="TextChanges"
                     FormattedText="{x:Binding FormattedString}"
                     AutomationId="Mention" />
