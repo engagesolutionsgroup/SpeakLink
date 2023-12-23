@@ -65,30 +65,28 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
 
     public bool IsMentionsEnabled { get; set; }
 
-    public virtual void UpdateTokenizer(string explicitChar)
+    public virtual void UpdateTokenizer(string explicitChars)
     {
-        if(_explicitChars == explicitChar)
+        if(_explicitChars == explicitChars)
             return;
         
-        _explicitChars = explicitChar;
-        SetupMentions(explicitChar);
+        _explicitChars = explicitChars;
+        SetupMentions(explicitChars);
     }
 
     public void SetupMentions(string explicitChars = "@",
-        string workBreakChars = ", ",
         int maxNumKeywords = 2,
-        int threshold = 1)
+        int threshold = 150)
     {
         _explicitChars = explicitChars;
         _wordTokenizer = new WordTokenizerConfig
                 .Builder()
-            .SetWordBreakChars(workBreakChars)
             .SetExplicitChars(explicitChars)
             .SetMaxNumKeywords(maxNumKeywords)
             .SetThreshold(threshold)
             .Build();
-
-        base.Tokenizer = new WordTokenizer(_wordTokenizer);
+        
+        this.Tokenizer = new WordTokenizer(_wordTokenizer);
 
         SetQueryTokenReceiver(this);
         SetSuggestionsVisibilityManager(this);
@@ -99,7 +97,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
 
     public IList<string> OnQueryReceived(QueryToken queryToken)
     {
-        if (queryToken.ExplicitChar == 0)
+        if (!queryToken.IsExplicit)
             return _bucket;
 
         var args = new MentionSearchEventArgs(queryToken.ExplicitChar.ToString(), queryToken.Keywords);
@@ -141,3 +139,4 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         _ignoreTextChangeNotification = false;
     }
 }
+
