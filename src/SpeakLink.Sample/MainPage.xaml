@@ -5,91 +5,107 @@
              xmlns:sample="clr-namespace:SpeakLink.Sample"
              xmlns:mention="clr-namespace:SpeakLink.Mention;assembly=SpeakLink"
              x:Class="SpeakLink.Sample.MainPage"
-             x:DataType="sample:MentionsViewModel">
+             x:DataType="sample:MentionsViewModel"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
     <ContentPage.BindingContext>
         <sample:MentionsViewModel />
     </ContentPage.BindingContext>
 
-    <Grid RowDefinitions="*,Auto,Auto">
-        <Grid Grid.Row="1" MinimumHeightRequest="200" Margin="8">
-            <VerticalStackLayout HorizontalOptions="Start"
-                                 VerticalOptions="Start"
-                                 Spacing="20">
-                <Label Text="Formatted TextBinding Label Below" FontSize="10" />
-                <Label
-                    FormattedText="{x:Binding FormattedString}"
-                    FontFamily="OpenSansRegular"
-                    FontSize="14"
-                    TextColor="Black"
-                    HorizontalTextAlignment="Start"
-                    VerticalTextAlignment="Start" />
-            </VerticalStackLayout>
+    <ScrollView Padding="0,0,0,20" >
+        <Grid RowDefinitions="*,Auto,Auto" IgnoreSafeArea="True">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="HideKeyboard" />
+            </Grid.GestureRecognizers>
+            <Grid Grid.Row="1" MinimumHeightRequest="200" Margin="8">
+                <VerticalStackLayout HorizontalOptions="Start"
+                                     VerticalOptions="Start"
+                                     Spacing="20">
+                    <Label Text="Tap to close keyboard" FontSize="10">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label
+                        FormattedText="{x:Binding FormattedString}"
+                        FontFamily="OpenSansRegular"
+                        FontSize="14"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Start"
+                        VerticalTextAlignment="Start" />
+                </VerticalStackLayout>
 
-            <Border VerticalOptions="End" HorizontalOptions="Fill" HeightRequest="177" StrokeThickness="0"
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
-                    IsVisible="{Binding IsDisplayingMentions}">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                            Offset="1,1"
-                            Opacity="0.4" />
-                </Border.Shadow>
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16,16,0,0" />
-                </Border.StrokeShape>
-                <CollectionView ItemsSource="{x:Binding MentionUsers}"
-                                SelectionMode="Single"
-                                SelectionChanged="SelectableItemsView_OnSelectionChanged"
-                                Margin="0,0,0,1">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="sample:User">
-                            <Grid HeightRequest="44">
-                                <Grid Padding="8,4" HeightRequest="44">
-                                    <Border StrokeThickness="0"
-                                            HorizontalOptions="Start"
-                                            HeightRequest="32"
-                                            WidthRequest="32">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="16" />
-                                        </Border.StrokeShape>
-                                        <Image Source="{x:Binding ImageUrl}"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="Center" />
-                                    </Border>
-                                    <Label Text="{x:Binding FullName}" Margin="44,0,0,0" />
+                <Border VerticalOptions="End" HorizontalOptions="Fill" HeightRequest="177" StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
+                        IsVisible="{Binding IsDisplayingMentions}">
+                    <Border.Shadow>
+                        <Shadow Brush="Black"
+                                Offset="1,1"
+                                Opacity="0.4" />
+                    </Border.Shadow>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16,16,0,0" />
+                    </Border.StrokeShape>
+                    <CollectionView x:Name="MentionCollectionView"
+                                    ItemsSource="{x:Binding MentionUsers}"
+                                    SelectionMode="None"
+                                    Margin="0,0,0,0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="sample:User">
+                                <Grid HeightRequest="44">
+                                    <Grid Padding="8,4" HeightRequest="44">
+                                        <Border StrokeThickness="0"
+                                                HorizontalOptions="Start"
+                                                HeightRequest="32"
+                                                WidthRequest="32">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="16" />
+                                            </Border.StrokeShape>
+                                            <Image Source="{x:Binding ImageUrl}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{x:Binding FullName}" Margin="44,0,0,0" />
+                                    </Grid>
+                                    <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
+                                          BackgroundColor="LightGray"
+                                          VerticalOptions="End"
+                                          HorizontalOptions="Fill" />
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="UserTappedFromMentionSelector"
+                                                              CommandParameter="{Binding .}"
+                                                              NumberOfTapsRequired="1" />
+                                    </Grid.GestureRecognizers>
                                 </Grid>
-                                <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
-                                      BackgroundColor="LightGray"
-                                      VerticalOptions="End"
-                                      HorizontalOptions="Fill" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Border>
-        </Grid>
-        <Grid Grid.Row="2">
-            <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
-                  BackgroundColor="LightGray"
-                  VerticalOptions="End"
-                  HorizontalOptions="Fill" />
-            <Grid Margin="0,1,0,0">
-                <mention:MentionEditor
-                    Grid.Column="0"
-                    x:Name="MentionEditor"
-                    FontSize="18"
-                    FontFamily="OpenSansRegular"
-                    MentionSearchCommand="{x:Binding MentionSearchCommand}"
-                    IsSuggestionsPopupVisible="{x:Binding IsDisplayingMentions}"
-                    ExplicitCharacters="@"
-                    TextColor="Black"
-                    MentionTextColor="DodgerBlue"
-                    PlaceholderText="To mention someone type @"
-                    MentionSelectedBackgroundColor="Blue"
-                    MentionSelectedTextColor="White"
-                    AutoSize="TextChanges"
-                    FormattedText="{x:Binding FormattedString}"
-                    AutomationId="Mention" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
+                      BackgroundColor="LightGray"
+                      VerticalOptions="End"
+                      HorizontalOptions="Fill" />
+                <Grid Margin="0,1,0,0">
+                    <mention:MentionEditor
+                        Grid.Column="0"
+                        x:Name="MentionEditor"
+                        FontSize="18"
+                        IsVisible="True"
+                        FontFamily="OpenSansRegular"
+                        MentionSearchCommand="{x:Binding MentionSearchCommand}"
+                        IsSuggestionsPopupVisible="{x:Binding IsDisplayingMentions}"
+                        ExplicitCharacters="@"
+                        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                        MentionTextColor="DodgerBlue"
+                        Placeholder="To mention someone type @"
+                        MentionSelectedBackgroundColor="Blue"
+                        MentionSelectedTextColor="White"
+                        AutoSize="TextChanges"
+                        FormattedText="{x:Binding FormattedString}"
+                        AutomationId="Mention" />
+                </Grid>
             </Grid>
         </Grid>
-    </Grid>
+    </ScrollView>
 </ContentPage>

@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SpeakLink.Mention;
 
-public partial class MentionEditor : View, IEditorController
+public partial class MentionEditor : View, IEditorController, IPaddingElement
 {    
     private double _previousWidthConstraint;
     private double _previousHeightConstraint;
@@ -67,6 +67,7 @@ public partial class MentionEditor : View, IEditorController
 
     protected override Size ArrangeOverride(Rect bounds)
     {
+        
         _previousBounds = bounds;
         return base.ArrangeOverride(bounds);
     }
@@ -96,12 +97,12 @@ public partial class MentionEditor : View, IEditorController
         return base.MeasureOverride(widthConstraint, heightConstraint);
     }
 
-    public static readonly BindableProperty PlaceholderTextProperty = BindableProperty.Create(
-        nameof(PlaceholderText), typeof(string), typeof(Editor), default);
+    public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(
+        nameof(Placeholder), typeof(string), typeof(Editor), default);
 
-    public string PlaceholderText
+    public string Placeholder
     {
-        get => (string)GetValue(PlaceholderTextProperty);
-        set => SetValue(PlaceholderTextProperty, value);
+        get => (string)GetValue(PlaceholderProperty);
+        set => SetValue(PlaceholderProperty, value);
     }
 }

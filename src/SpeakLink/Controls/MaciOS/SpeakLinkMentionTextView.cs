@@ -24,6 +24,8 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     public event EventHandler<MentionSearchEventArgs>? MentionSearched;
     public event EventHandler<bool>? DisplaySuggestionChanged;
+    public event EventHandler<bool>? FirstResponderStateChanged;
+
 
     public NSDictionary? MentionUnselectedAttributes
     {
@@ -191,6 +193,8 @@ public class SpeakLinkMentionTextView : HKWTextView
             HKWMentionsPluginV2.MentionsPluginWithChooserMode(
                 HKWMentionsChooserPositionMode.CustomLockBottomNoArrow,
                 characterSet, 1);
+        _mentionsPlugin.NotifyTextViewDelegateOnMentionDeletion = true;
+        _mentionsPlugin.NotifyTextViewDelegateOnMentionCreation = true;
         
         _chooserViewDelegate = new MentionsHkwMentionsCustomChooserViewDelegate
         { 
@@ -277,5 +281,22 @@ public class SpeakLinkMentionTextView : HKWTextView
     {
         if (_placeholderLabel != null)
             _placeholderLabel.Font = newFont;
+    }
+
+    public override bool BecomeFirstResponder()
+    {
+        var baseResult = base.BecomeFirstResponder();
+        if (baseResult)
+            FirstResponderStateChanged?.Invoke(this, true);
+
+        return baseResult;
+    }
+
+    public override bool ResignFirstResponder()
+    {
+        var baseResult = base.ResignFirstResponder();
+        if (baseResult)
+            FirstResponderStateChanged?.Invoke(this, true);
+        return baseResult;
     }
 }

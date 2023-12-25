@@ -1,4 +1,3 @@
-
 using System.Diagnostics.CodeAnalysis;
 using Foundation;
 using LinkedIn.Hakawai;
@@ -74,6 +73,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         platform.MentionSearched += MentionSearched;
         platform.TextChanged += OnTextChanged;
         platform.DisplaySuggestionChanged += DisplaySuggestionChanged;
+        platform.FirstResponderStateChanged += FirstResponderStateChanged;
         platform.SetupMentions();
     }
 
@@ -100,7 +100,14 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         platform.MentionSearched -= MentionSearched;
         platform.DisplaySuggestionChanged -= DisplaySuggestionChanged;
         platform.TextChanged -= OnTextChanged;
+        platform.FirstResponderStateChanged -= FirstResponderStateChanged;
         base.DisconnectHandler(platform);
+    }
+
+    private void FirstResponderStateChanged(object? sender, bool e)
+    {
+        if(VirtualView is IView view && view.IsFocused != e)
+            view.IsFocused = e;
     }
 
     static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view)
@@ -133,11 +140,6 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         if (arg is IHKWMentionsEntityProtocol mentionsEntityProtocol)
             handler.PlatformView.MentionSelected(mentionsEntityProtocol);
-
-        handler._ignoreFormattedTextChanges = true;
-        handler.ElementController?.SendFormattedTextChanged(handler.GetFormattedText());
-        handler._ignoreFormattedTextChanges = false;
-
     }
 
     static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view)
@@ -292,7 +294,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     protected static void MapPlaceholderText(MentionEditorHandler handler, MentionEditor editor)
     {
-        handler.PlatformView.PlaceholderText = editor.PlaceholderText;
+        handler.PlatformView.PlaceholderText = editor.Placeholder;
     }
 
     public static bool ArgbEquivalent(UIColor? color1, UIColor? color2, double? tolerance = null)
@@ -318,5 +320,23 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             && Equal(green1, green2, tolerance.Value)
             && Equal(blue1, blue2, tolerance.Value)
             && Equal(alpha1, alpha2, tolerance.Value);
+    }
+    
+    internal static void MapIsFocused(MentionEditorHandler handler, MentionEditor editor)
+    {
+        var platformView = handler.PlatformView;
+        if (editor.IsFocused)
+        {
+            if (!platformView.IsFirstResponder)
+                platformView.BecomeFirstResponder();
+        }
+        else
+        {   
+            if (platformView.IsFirstResponder)
+                handler.PlatformView.ResignFirstResponder();
+        }
+#if !MACCATALYST
+        //_resignFirstResponderActionDisposable = ResignFirstResponderTouchGestureRecognizer.Update(handler.PlatformView);
+#endif
     }
 }

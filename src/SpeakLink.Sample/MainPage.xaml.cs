@@ -1,4 +1,6 @@
-﻿namespace SpeakLink.Sample;
+﻿using Microsoft.Maui.Platform;
+
+namespace SpeakLink.Sample;
 
 public partial class MainPage : ContentPage
 {
@@ -7,10 +9,21 @@ public partial class MainPage : ContentPage
         InitializeComponent();
     }
 
-    private void SelectableItemsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private void HideKeyboard(object? sender, TappedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is User user)
+        if (MentionEditor.IsSuggestionsPopupVisible 
+            && e.GetPosition(MentionCollectionView) is { } position
+            && position.Inside(MentionCollectionView))
+        { 
+            return;
+        }
+        
+        MentionEditor.Unfocus();
+    }
+
+    private void UserTappedFromMentionSelector(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is User user)
             MentionEditor.InsertMention(user.Id.ToString(), user.FullName);
-        (sender as CollectionView).SelectedItem = null;
     }
 }

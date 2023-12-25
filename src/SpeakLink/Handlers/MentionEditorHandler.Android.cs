@@ -1,15 +1,21 @@
+using System.Reflection;
 using Android.Graphics;
 using Android.Text;
 using Android.Text.Style;
 using Android.Views;
+using Android.Views.InputMethods;
+using Android.Widget;
+using AndroidX.Core.View;
 using Java.Lang;
 using LinkedIn.Spyglass.Mentions;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using SpeakLink.Controls.Android;
 using SpeakLink.Mention;
 using Rect = Microsoft.Maui.Graphics.Rect;
 using TextChangedEventArgs = Microsoft.Maui.Controls.TextChangedEventArgs;
+using View = Microsoft.Maui.Controls.View;
 
 namespace SpeakLink.Handlers;
 
@@ -421,5 +427,73 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         };
 
     private static void MapPlaceholderText(MentionEditorHandler handler, MentionEditor editor)
-        => handler.PlatformView.Hint = editor.PlaceholderText;
+        => handler.PlatformView.Hint = editor.Placeholder;
+    
+    internal static void MapIsFocused(MentionEditorHandler handler, MentionEditor editor)
+    {
+        SpeakLinkMentionEditText? platformView = handler.PlatformView;
+        if (platformView == null)
+            return; 
+        if(editor.IsFocused)
+        {
+            if (!IsSoftInputShowing(platformView))
+                ShowSoftInput(platformView);
+        }
+        else
+        {
+            if (IsSoftInputShowing(platformView))
+                HideSoftInput(platformView);
+        }
+        // We can't use the default implementation because it will interfere with selection view click
+        //handler.RegisterForHideHideSoftInputOnTappedChangedManager(handler, editor);
+    }
+    
+    private void RegisterForHideHideSoftInputOnTappedChangedManager(MentionEditorHandler handler,
+        MentionEditor mentionEditor)
+    {
+        if (typeof(View).Assembly.GetType("Microsoft.Maui.Controls.HideSoftInputOnTappedChangedManager") is
+                { } inputKeyboardManagerType
+            && handler.MauiContext?.Services.GetService(inputKeyboardManagerType) is { } inputKeyboardManager
+            && inputKeyboardManagerType.GetMethod("UpdateFocusForView", BindingFlags.NonPublic | BindingFlags.Instance)
+                is { } method)
+        {
+            method.Invoke(inputKeyboardManager, [mentionEditor]);
+        }
+    }
+    
+    internal static bool IsSoftInputShowing(Android.Views.View view)
+    {
+        var insets = ViewCompat.GetRootWindowInsets(view);
+        if (insets is null)
+        {
+            return false;
+        }
+
+        var result = insets.IsVisible(WindowInsetsCompat.Type.Ime());
+        return result;
+    }
+
+    internal static bool HideSoftInput(Android.Views.View view)
+    {
+        using var inputMethodManager = (InputMethodManager?)view.Context?.GetSystemService(Android.Content.Context.InputMethodService);
+        var windowToken = view.WindowToken;
+
+        if (windowToken is not null && inputMethodManager is not null)
+        {
+            return inputMethodManager.HideSoftInputFromWindow(windowToken, HideSoftInputFlags.None);
+        }
+
+        return false;
+    }
+
+    internal static bool ShowSoftInput(TextView inputView)
+    {
+        using var inputMethodManager = (InputMethodManager?)inputView.Context?.GetSystemService(Android.Content.Context.InputMethodService);
+
+        // The zero value for the second parameter comes from 
+        // https://developer.android.com/reference/android/view/inputmethod/InputMethodManager#showSoftInput(android.view.View,%20int)
+        // Apparently there's no named value for zero in this case
+        return inputMethodManager?.ShowSoftInput(inputView, 0) is true;
+    }
 }
+

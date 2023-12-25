@@ -1,3 +1,5 @@
+using System.Reflection;
+using Microsoft.Maui.Handlers;
 using SpeakLink.Mention;
 
 namespace SpeakLink.Handlers;
@@ -7,13 +9,14 @@ public partial class MentionEditorHandler
     public static readonly IPropertyMapper<MentionEditor, MentionEditorHandler> PropertyMapper =
         new PropertyMapper<MentionEditor, MentionEditorHandler>(ViewMapper)
         {
+            [nameof(MentionEditor.IsEnabled)] = MapIsEnabled,
+            [nameof(MentionEditor.IsFocused)] = MapIsFocused,
             //Default font appearance
             [nameof(MentionEditor.Text)] = MapText,
             [nameof(ITextStyle.Font)] = MapFont,
             [nameof(ITextStyle.TextColor)] = MapTextColor,
-            [nameof(MentionEditor.IsEnabled)] = MapIsEnabled,
             [nameof(MentionEditor.AutoSize)] = MapAutoSize,
-            [nameof(MentionEditor.PlaceholderText)] = MapPlaceholderText,
+            [nameof(MentionEditor.Placeholder)] = MapPlaceholderText,
             //FormattedText
             [nameof(MentionEditor.FormattedText)] = MapFormattedText,
             //Mentions
@@ -24,14 +27,14 @@ public partial class MentionEditorHandler
             [nameof(MentionEditor.MentionSelectedTextColor)] = MapMentionColors,
             [nameof(MentionEditor.MentionSelectedBackgroundColor)] = MapMentionColors,
             //Mentions Commands
-            [nameof(MentionEditor.MentionSearchCommand)] = MapMentionSearchCommand
+            [nameof(MentionEditor.MentionSearchCommand)] = MapMentionSearchCommand,
         };
-
 
     public static readonly CommandMapper<MentionEditor, MentionEditorHandler> CommandMapper =
         new(ViewCommandMapper)
         {
-            [nameof(MentionEditor.MentionInsertRequestCommand)] = MapMentionInsertRequested
+            [nameof(MentionEditor.MentionInsertRequestCommand)] = MapMentionInsertRequested,
+            [nameof(View.Focus)] = MapFocus,
         };
 
     static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view);
@@ -54,5 +57,11 @@ public partial class MentionEditorHandler
 
     public MentionEditorHandler(IPropertyMapper mapper, CommandMapper? commandMapper) : base(mapper, commandMapper)
     {
+        
+    }
+
+    public static void MapFocus(IViewHandler handler, IView mentionEditor, object? args)
+    {
+
     }
 }
