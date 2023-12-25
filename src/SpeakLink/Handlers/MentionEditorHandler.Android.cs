@@ -240,7 +240,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
             if (span is Mention.MentionSpan mentionSpan)
                 spannable.SetSpan(new LinkedIn.Spyglass.Mentions.MentionSpan(
-                        new MentionEntity(mentionSpan.MentionId, mentionSpan.Text),
+                        new MentionEntity { Id = mentionSpan.MentionId, Name = mentionSpan.Text},
                         handler.PlatformView.MentionSpanConfig),
                     start, end, SpanTypes.ExclusiveExclusive);
 

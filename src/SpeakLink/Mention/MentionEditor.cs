@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace SpeakLink.Mention;
 
-public partial class MentionEditor : View, IEditorController, IPaddingElement
+public partial class MentionEditor : View, IEditorController
 {    
     private double _previousWidthConstraint;
     private double _previousHeightConstraint;

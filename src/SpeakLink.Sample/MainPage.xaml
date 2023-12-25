@@ -5,8 +5,10 @@
              xmlns:sample="clr-namespace:SpeakLink.Sample"
              xmlns:mention="clr-namespace:SpeakLink.Mention;assembly=SpeakLink"
              x:Class="SpeakLink.Sample.MainPage"
-             x:DataType="sample:MentionsViewModel"
-             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
+             x:DataType="sample:MentionsViewModel">
+    <ContentPage.Resources>
+        <sample:FormattedStringDescriptionConverter x:Key="FormattedStringDescriptionConverter" />
+    </ContentPage.Resources>
     <ContentPage.BindingContext>
         <sample:MentionsViewModel />
     </ContentPage.BindingContext>
@@ -16,17 +18,21 @@
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="HideKeyboard" />
             </Grid.GestureRecognizers>
-            <Grid Grid.Row="1" MinimumHeightRequest="200" Margin="8">
+            <Grid Grid.Row="0" MinimumHeightRequest="200" Margin="8">
                 <VerticalStackLayout HorizontalOptions="Start"
                                      VerticalOptions="Start"
                                      Spacing="20">
-                    <Label Text="Tap to close keyboard" FontSize="10">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer />
-                        </Label.GestureRecognizers>
-                    </Label>
+                    <Label Text="Formatted Text" FontSize="12" FontAttributes="Bold" />
                     <Label
                         FormattedText="{x:Binding FormattedString}"
+                        FontFamily="OpenSansRegular"
+                        FontSize="14"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Start"
+                        VerticalTextAlignment="Start" />
+                    <Label Text="Formatted Text Description" FontSize="12" FontAttributes="Bold" />
+                    <Label
+                        FormattedText="{x:Binding FormattedString, Converter={StaticResource FormattedStringDescriptionConverter}}" 
                         FontFamily="OpenSansRegular"
                         FontSize="14"
                         TextColor="Black"

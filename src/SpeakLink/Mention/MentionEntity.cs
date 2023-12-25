@@ -1,4 +1,3 @@
-
 #if ANDROID
 using Object = Java.Lang.Object;
 using Android.OS;
@@ -15,52 +14,35 @@ namespace SpeakLink.Mention;
 
 public class MentionEntity
 #if MACCATALYST || IOS
-    : NSObject, IHKWMentionsEntityProtocol
+    : HKWMentionsEntityProtocol
 #endif
 #if ANDROID
     : Object, IMentionable
 #endif
 {
-    public MentionEntity(string id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
-
     public string Id { get; init; }
     public string Name { get; init; }
 
 
 #if IOS || MACCATALYST
-    public MentionEntity(NSObjectFlag x) : base(x)
+
+    public MentionEntity()
     {
     }
 
-    protected internal MentionEntity(NativeHandle handle) : base(handle)
+    public MentionEntity(NSObjectFlag t) : base(t)
     {
     }
 
-    protected MentionEntity(NativeHandle handle, bool alloced) : base(handle, alloced)
+    protected MentionEntity(NativeHandle handle) : base(handle)
     {
     }
 
-    NSString IHKWMentionsEntityProtocol.EntityId()
-    {
-        return new NSString(Id);
-    }
-
-    NSString IHKWMentionsEntityProtocol.EntityName()
-    {
-        return new NSString(Name);
-    }
-
-    NSDictionary IHKWMentionsEntityProtocol.EntityMetadata => new();
+    public override NSString EntityId() => new(Id);
+    public override NSString EntityName() => new(Name);
+    public override NSDictionary EntityMetadata => new();
 #endif
 #if ANDROID
-    protected MentionEntity()
-    {
-    }
-
     public MentionEntity(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
     {
     }

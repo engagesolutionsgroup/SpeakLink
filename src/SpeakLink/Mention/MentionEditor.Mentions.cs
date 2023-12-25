@@ -62,7 +62,7 @@ public partial class MentionEditor : IMentionController
         ArgumentException.ThrowIfNullOrEmpty(nameof(mentionId));
         ArgumentException.ThrowIfNullOrEmpty(nameof(mentionText));
 
-        InsertMention(new MentionEntity(mentionId, mentionText));
+        InsertMention(new MentionEntity { Id = mentionId,Name = mentionText});
     }
 
     public void InsertMention(MentionEntity mentionEntity)
