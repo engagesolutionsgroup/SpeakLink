@@ -8,7 +8,7 @@ public class MentionsViewModel : INotifyPropertyChanged
 {
     private List<User> _mentionUsers;
     private bool _isDisplayingMentions;
-    private FormattedString formattedString;
+    private FormattedString formattedString = new();
 
     public MentionService MentionService { get; set; }
 

@@ -18,5 +18,6 @@ Global
 		{AA27B15B-47DB-49FA-8010-D7D33CC1D1E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA27B15B-47DB-49FA-8010-D7D33CC1D1E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA27B15B-47DB-49FA-8010-D7D33CC1D1E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA27B15B-47DB-49FA-8010-D7D33CC1D1E6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal
