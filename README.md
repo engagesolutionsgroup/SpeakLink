@@ -1,7 +1,9 @@
 # SpeakLink Mention Editor Library for .NET MAUI
 [![NuGet version (SpeakLink)](https://img.shields.io/nuget/v/SpeakLink.svg?style=flat-square)](https://www.nuget.org/packages/SpeakLink/)
 ## Overview
-The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text editor functionality with support for @mentions. Designed to bring the intuitive and flexible mention capabilities found on social media platforms to .NET MAUI apps, it offers a seamless integration for developers.
+The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text editor functionality with support for @mentions. Designed to bring the intuitive and flexible mention capabilities found on social media platforms to .NET MAUI apps, it offers a seamless integration for developers. It is up to you how you want the mention/hashtag picker to look; see the example project to see how the most common approach, 'mention list above input,' is implemented.
+
+![GIF image that displays sample project mention picking flow](/gif/ios.gif)
 
 ## Usage
 1. **Add the Library**: Integrate the `SpeakLink.Mention` library into your project either through NuGet or by adding a direct reference.
@@ -25,3 +27,20 @@ The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text
    editor.InsertMention(id, mentionText);
    ```
 6. **FormattedText Property Updates**: The `SpeakLink.Mention.MentionEditor`'s `FormattedText` property updates dynamically as the user types, deletes, or inserts a mention. Each mention is represented as a distinct `MentionSpan` that contains `Id` and `Text` as `mentionText`.
+7. **Keyboard closing**: The keyboard will close as soon as focus is lost. Unfortunately, I wasn't able to integrate with [HideSoftInputOnTapped property of ContentPage](https://learn.microsoft.com/en-us/dotnet/api/microsoft.maui.controls.contentpage.hidesoftinputontapped?view=net-maui-8.0#microsoft-maui-controls-contentpage-hidesoftinputontapped) because HideSoftInputOnTapped is internal class for MAUI, moreover it doesnt support adding additional ignore area for picker, so you have to add GestureRecognizer on your root element and add something like:
+      ```csharp
+    private void HideKeyboard(object? sender, TappedEventArgs e)
+    {
+        if (!MentionEditor.IsFocused)
+            return;
+        
+        if (MentionEditor.IsSuggestionsPopupVisible
+            && e.GetPosition(MentionPickerView) is { } position
+            && position.InsideElement(MentionPickerView))
+        {
+            return;
+        }
+
+        MentionEditor.Unfocus();
+    }
+   ```
