@@ -1,6 +1,4 @@
-﻿using Microsoft.Maui.Platform;
-
-namespace SpeakLink.Sample;
+﻿namespace SpeakLink.Sample;
 
 public partial class MainPage : ContentPage
 {
@@ -11,13 +9,16 @@ public partial class MainPage : ContentPage
 
     private void HideKeyboard(object? sender, TappedEventArgs e)
     {
-        if (MentionEditor.IsSuggestionsPopupVisible 
+        if (!MentionEditor.IsFocused)
+            return;
+        
+        if (MentionEditor.IsSuggestionsPopupVisible
             && e.GetPosition(MentionCollectionView) is { } position
-            && position.Inside(MentionCollectionView))
-        { 
+            && position.InsideElement(MentionCollectionView))
+        {
             return;
         }
-        
+
         MentionEditor.Unfocus();
     }
 

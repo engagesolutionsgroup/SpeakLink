@@ -2,8 +2,8 @@ namespace SpeakLink.Mention;
 
 internal interface IMentionController
 {
-    void SendMentionSearched(MentionSearchEventArgs e);
-    void SendDisplaySuggestionsChanged(bool newState);
-    void OnTextChanged(string? oldValue, string? newValue);
-    void SendFormattedTextChanged(FormattedString getFormattedText);
+    internal void SendMentionSearched(MentionSearchEventArgs e);
+    internal void SendDisplaySuggestionsChanged(bool newState);
+    internal void OnTextChanged(string? oldValue, string? newValue);
+    internal void SendFormattedTextChanged(FormattedString getFormattedText);
 }

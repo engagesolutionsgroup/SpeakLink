@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 using CoreGraphics;
 using Foundation;
 using LinkedIn.Hakawai;
@@ -216,9 +217,10 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     internal void OnTextChangedDelegate(string? oldValue, string? newValue)
     {
-        HidePlaceholderIfTextIsPresent(newValue);
+        HidePlaceholderIfTextIsPresent(Text);
         if (_ignoreTextChangeNotification)
             return;
+        
         TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
     }
 
@@ -241,7 +243,7 @@ public class SpeakLinkMentionTextView : HKWTextView
         set
         {
             base.AttributedText = value;
-            HidePlaceholderIfTextIsPresent(value?.Value);
+            HidePlaceholderIfTextIsPresent(Text);
         }
     }
 

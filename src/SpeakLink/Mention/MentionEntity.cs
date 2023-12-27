@@ -3,7 +3,6 @@ using Object = Java.Lang.Object;
 using Android.OS;
 using Android.Runtime;
 using LinkedIn.Spyglass.Mentions;
-
 #elif IOS || MACCATALYST
 using ObjCRuntime;
 using Foundation;
@@ -20,15 +19,15 @@ public class MentionEntity
     : Object, IMentionable
 #endif
 {
+    public MentionEntity()
+    {
+    }
+
     public string Id { get; init; }
     public string Name { get; init; }
 
 
 #if IOS || MACCATALYST
-
-    public MentionEntity()
-    {
-    }
 
     public MentionEntity(NSObjectFlag t) : base(t)
     {
@@ -46,7 +45,7 @@ public class MentionEntity
     public MentionEntity(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
     {
     }
-    
+
     public int DescribeContents() => 0;
 
     public void WriteToParcel(Parcel dest, ParcelableWriteFlags flags)
@@ -62,15 +61,15 @@ public class MentionEntity
     public string GetTextForDisplayMode(IMentionable.MentionDisplayMode p0) => Name;
 
     public IMentionable.MentionDeleteStyle DeleteStyle => IMentionable.MentionDeleteStyle.FullDelete!;
-    
+
     public static MentionEntity? FromParcel(Parcel? source)
     {
         if (source == null)
             return null;
-        
+
         var name = source.ReadString()!;
         var id = source.ReadString()!;
-        return new MentionEntity(id, name);
+        return new MentionEntity() { Id = id, Name = name };
     }
 
     public class PersonLoader : Object, IParcelableCreator

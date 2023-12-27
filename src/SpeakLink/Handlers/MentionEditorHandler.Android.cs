@@ -8,7 +8,6 @@ using Android.Widget;
 using AndroidX.Core.View;
 using Java.Lang;
 using LinkedIn.Spyglass.Mentions;
-using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using SpeakLink.Controls.Android;

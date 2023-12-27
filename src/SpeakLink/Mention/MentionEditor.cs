@@ -9,6 +9,8 @@ public partial class MentionEditor : View, IEditorController
     private Rect _previousBounds;
     
     internal string MentionInsertRequestCommand = nameof(MentionInsertRequestCommand);
+    
+    public event EventHandler<TextChangedEventArgs>? TextChanged; 
 
     /// <summary>Bindable property for <see cref="AutoSize"/>.</summary>
     public static readonly BindableProperty AutoSizeProperty = BindableProperty.Create(nameof(AutoSize),
@@ -51,12 +53,17 @@ public partial class MentionEditor : View, IEditorController
         Completed?.Invoke(this, EventArgs.Empty);
     }
 
-    public virtual void OnTextChanged(string? oldValue, string? newValue) 
-        => ResizeIfNeeded();
+    void IMentionController.OnTextChanged(string? oldValue, string? newValue)
+    {
+        ResizeIfNeeded();
+        TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
+    }
 
     protected virtual void ResizeIfNeeded()
     {
-        if (AutoSize == EditorAutoSizeOption.TextChanges)
+        if (AutoSize == EditorAutoSizeOption.TextChanges &&
+            MeasureOverride(_previousWidthConstraint, _previousHeightConstraint)
+            == new Size(_previousBounds.Width, _previousBounds.Height))
             InvalidateMeasure();
     }
 
@@ -67,13 +74,17 @@ public partial class MentionEditor : View, IEditorController
 
     protected override Size ArrangeOverride(Rect bounds)
     {
-        
         _previousBounds = bounds;
         return base.ArrangeOverride(bounds);
     }
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
+#if IOS
+        if(MaximumHeightRequest > 0 && heightConstraint > MaximumHeightRequest)
+            heightConstraint = MaximumHeightRequest;
+#endif
+        
         bool TheSame(double width, double otherWidth)
         {
             return Math.Abs(width - otherWidth) < double.Epsilon;

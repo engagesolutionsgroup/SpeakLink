@@ -43,7 +43,6 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         if (view.AutoSize != EditorAutoSizeOption.TextChanges) 
             return;
         
-        handler.PlatformView.ScrollEnabled = false;
         handler.PlatformView.InvalidateIntrinsicContentSize();
     }
 
@@ -75,6 +74,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         platform.DisplaySuggestionChanged += DisplaySuggestionChanged;
         platform.FirstResponderStateChanged += FirstResponderStateChanged;
         platform.SetupMentions();
+        platform.ScrollEnabled = true;
     }
 
     private void OnTextChanged(object? sender, TextChangedEventArgs e)
@@ -321,7 +321,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             && Equal(blue1, blue2, tolerance.Value)
             && Equal(alpha1, alpha2, tolerance.Value);
     }
-    
+
     internal static void MapIsFocused(MentionEditorHandler handler, MentionEditor editor)
     {
         var platformView = handler.PlatformView;

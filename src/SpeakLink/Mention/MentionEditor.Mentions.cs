@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Windows.Input;
-using SpeakLink.Mention;
 
 namespace SpeakLink.Mention;
 

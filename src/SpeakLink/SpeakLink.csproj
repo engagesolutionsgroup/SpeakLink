@@ -13,7 +13,7 @@
 	<PropertyGroup>
 		<!-- NuGet Package properties -->
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>0.1.1</Version>
+		<Version>0.1.2</Version>
 		<Authors>Artem Valieiev</Authors>
 		<Product>SpeakLink</Product>
 		<Description>The SpeakLink MentionEditor is a extended mention control for .NET MAUI applications. It provides an enriched text editing experience with support for '@' mentions or any other trigger character, similar to popular social media platforms. The MentionEditor control is highly customizable, allowing developers to easily integrate and adapt it to their specific application needs.</Description>
@@ -23,21 +23,17 @@
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageIconUrl>https://cdn.githubraw.com/artemvalieiev/SpeakLink/main/logo.png</PackageIconUrl>
 	</PropertyGroup>
-	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
-	
 	<ItemGroup>
 		<None Include="../../logo.png" Pack="true" PackagePath="" />
 		<None Include="../../README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
-	
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Core" Version="$(MauiVersion)" />
 	</ItemGroup>
-	
 	<!-- Android -->
 	<ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-android')) != true">
 		<Compile Remove="**\*.Android.cs" />
@@ -45,7 +41,6 @@
 		<Compile Remove="**\Android\**\*.cs" />
 		<None Include="**\Android\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 	</ItemGroup>
-
 	<!-- Both iOS and Mac Catalyst -->
 	<ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-ios')) != true AND $(TargetFramework.StartsWith('net8.0-maccatalyst')) != true">
 		<Compile Remove="**\*.MaciOS.cs" />
@@ -53,12 +48,10 @@
 		<Compile Remove="**\MaciOS\**\*.cs" />
 		<None Include="**\MaciOS\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 	</ItemGroup>
-	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 		<PackageReference Include="LinkedIn.Spyglass" Version="3.0.3.1" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios' OR '$(TargetFramework)' == 'net8.0-maccatalyst'">
-		<PackageReference Include="LinkedIn.Hakawai" Version="7.4.8.5" />
+		<PackageReference Include="LinkedIn.Hakawai" Version="7.4.8.6" />
 	</ItemGroup>
-
 </Project>
