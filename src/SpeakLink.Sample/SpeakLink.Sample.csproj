@@ -17,7 +17,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<!-- Display name -->
-		<ApplicationTitle>SpeakLink.Sample</ApplicationTitle>
+		<ApplicationTitle>SpeakLink</ApplicationTitle>
 		<!-- App Identifier -->
 		<ApplicationId>com.speaklink.sample</ApplicationId>
 		<!-- Versions -->
@@ -31,8 +31,7 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-		<AndroidLinkMode>None</AndroidLinkMode>
-		<CodesignKey>Apple Development: artemvalieiev@outlook.com (HN48X456R4)</CodesignKey>
+		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->

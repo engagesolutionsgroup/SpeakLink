@@ -135,7 +135,10 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     public void SetTextFormattedFromBinding(ICharSequence? convertToSpannableText)
     {
         _ignoreTextChangeNotification = true;
-        TextFormatted = convertToSpannableText;
+        if (convertToSpannableText != null)
+            TextFormatted = new MentionsEditable(convertToSpannableText);
+        else
+            Text = null;
         _ignoreTextChangeNotification = false;
     }
 }

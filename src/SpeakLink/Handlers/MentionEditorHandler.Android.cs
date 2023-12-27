@@ -179,7 +179,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         if (handler._ignoreFormattedTextChanges)
             return;
 
-        handler.PlatformView.SetTextFormattedFromBinding(ConvertToSpannableText(handler, view));
+        if(!string.IsNullOrWhiteSpace(handler.PlatformView?.Text))
+            handler.PlatformView.SetTextFormattedFromBinding(ConvertToSpannableText(handler, view));
     }
 
     internal static bool NeedsExactMeasure(IView virtualView)
