@@ -1,9 +1,10 @@
 # SpeakLink Mention Editor Library for .NET MAUI
 [![NuGet version (SpeakLink)](https://img.shields.io/nuget/v/SpeakLink.svg?style=flat-square)](https://www.nuget.org/packages/SpeakLink/)
 ## Overview
-The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text editor functionality with support for @mentions. Designed to bring the intuitive and flexible mention capabilities found on social media platforms to .NET MAUI apps, it offers a seamless integration for developers. It is up to you how you want the mention/hashtag picker to look; see the example project to see how the most common approach, 'mention list above input,' is implemented.
+The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text editor functionality with support for @mentions. Designed to bring the intuitive and flexible mention capabilities found on social media platforms to .NET MAUI apps, it offers a seamless integration for developers. It is up to you how you want the mention/hashtag picker to look; see the example project to see how the most common approach, 'mention list above input' is implemented.
 
-![GIF image that displays sample project mention picking flow](/gif/ios.gif)
+![GIF image that displays sample project mention picking flow iOS](/gif/ios.gif)
+![GIF image that displays sample project mention picking flow Android](/gif/android.gif)
 
 ## Usage
 1. **Add the Library**: Integrate the `SpeakLink.Mention` library into your project either through NuGet or by adding a direct reference.
