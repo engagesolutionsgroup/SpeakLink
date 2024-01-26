@@ -40,9 +40,9 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     private static void MapAutoSize(MentionEditorHandler handler, MentionEditor view)
     {
-        if (view.AutoSize != EditorAutoSizeOption.TextChanges) 
+        if (view.AutoSize != EditorAutoSizeOption.TextChanges)
             return;
-        
+
         handler.PlatformView.InvalidateIntrinsicContentSize();
     }
 
@@ -106,7 +106,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     private void FirstResponderStateChanged(object? sender, bool e)
     {
-        if(VirtualView is IView view && view.IsFocused != e)
+        if (VirtualView is IView view && view.IsFocused != e)
             view.IsFocused = e;
     }
 
@@ -317,9 +317,9 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         color2.GetRGBA(out nfloat red2, out nfloat green2, out nfloat blue2, out nfloat alpha2);
 
         return Equal(red1, red2, tolerance.Value)
-            && Equal(green1, green2, tolerance.Value)
-            && Equal(blue1, blue2, tolerance.Value)
-            && Equal(alpha1, alpha2, tolerance.Value);
+               && Equal(green1, green2, tolerance.Value)
+               && Equal(blue1, blue2, tolerance.Value)
+               && Equal(alpha1, alpha2, tolerance.Value);
     }
 
     internal static void MapIsFocused(MentionEditorHandler handler, MentionEditor editor)
@@ -331,12 +331,18 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                 platformView.BecomeFirstResponder();
         }
         else
-        {   
+        {
             if (platformView.IsFirstResponder)
                 handler.PlatformView.ResignFirstResponder();
         }
 #if !MACCATALYST
         //_resignFirstResponderActionDisposable = ResignFirstResponderTouchGestureRecognizer.Update(handler.PlatformView);
 #endif
+    }
+
+    public static void MapMentionCommand(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler?.PlatformView != null)
+            handler.PlatformView.ImageInputCommand = editor.ImageInputCommand;
     }
 }
