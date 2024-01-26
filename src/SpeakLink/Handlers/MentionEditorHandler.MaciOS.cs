@@ -339,4 +339,10 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         //_resignFirstResponderActionDisposable = ResignFirstResponderTouchGestureRecognizer.Update(handler.PlatformView);
 #endif
     }
+    
+    public static void MapMentionCommand(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler?.PlatformView != null)
+            handler.PlatformView.ImageInputCommand = editor.ImageInputCommand;
+    }
 }

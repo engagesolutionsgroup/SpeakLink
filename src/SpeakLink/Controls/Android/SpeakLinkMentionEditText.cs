@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Runtime;
 using Android.Util;
+using AndroidX.Core.View;
 using Java.Lang;
 using LinkedIn.Spyglass.Mentions;
 using LinkedIn.Spyglass.Suggestions;
@@ -25,6 +26,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     private string _explicitChars = "@";
     private MentionSpanConfig _mentionSpanConfig;
     private bool _ignoreTextChangeNotification;
+    private ICommand? imageInputCommand;
 
 
     protected SpeakLinkMentionEditText(IntPtr javaReference, JniHandleOwnership transfer)
@@ -141,5 +143,33 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
             Text = null;
         _ignoreTextChangeNotification = false;
     }
-}
 
+    public ICommand? ImageInputCommand
+    {
+        get => imageInputCommand;
+        set => SetupContentReceiverWithCommand(value);
+    }
+
+    private void SetupContentReceiverWithCommand(ICommand? value)
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(21))
+            return;
+        
+        if (imageInputCommand != null && value == null)
+        {
+            ViewCompat.SetOnReceiveContentListener(this, MediaContentReceiver.ImageMimeTypes, null);
+        }
+        if (value != null)
+        {
+            imageInputCommand = value;
+            ViewCompat.SetOnReceiveContentListener(
+                this,
+                MediaContentReceiver.ImageMimeTypes,
+                new MediaContentReceiver(Context!)
+                {
+                    ImageInputCommand = imageInputCommand
+                }
+            );
+        }
+    }
+}

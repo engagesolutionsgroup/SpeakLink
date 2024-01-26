@@ -5,6 +5,16 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+
+        this.MentionEditor.ImageInputCommand = new Command(ImageInsertFromKeyboard);
+    }
+
+    private void ImageInsertFromKeyboard(object obj)
+    {
+        if (obj is string imagePathFromTemp)
+        {
+            KeyboardInputImage.Source = imagePathFromTemp;
+        }
     }
 
     private void HideKeyboard(object? sender, TappedEventArgs e)

@@ -45,3 +45,7 @@ The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text
         MentionEditor.Unfocus();
     }
    ```
+
+## Image Insert
+Use ImageInsertCommand that passes string as filePath that user wants to insert
+![GIF image that insert support on Android](/gif/android_insert.gif)

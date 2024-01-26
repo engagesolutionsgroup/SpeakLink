@@ -19,10 +19,13 @@
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="HideKeyboard" />
             </Grid.GestureRecognizers>
+           
             <Grid MinimumHeightRequest="200" Margin="8" VerticalOptions="End">
                 <VerticalStackLayout HorizontalOptions="Start"
                                      VerticalOptions="Start"
                                      Spacing="20">
+                    <Label Text="Keyboard Input Image" FontSize="12" FontAttributes="Bold" />
+                    <Image x:Name="KeyboardInputImage" MaximumHeightRequest="200" />
                     <Label Text="Formatted Text" FontSize="12" FontAttributes="Bold" />
                     <Label
                         FormattedText="{x:Binding FormattedString}"

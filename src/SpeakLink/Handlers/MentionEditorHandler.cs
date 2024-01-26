@@ -26,6 +26,7 @@ public partial class MentionEditorHandler
             [nameof(MentionEditor.MentionSelectedBackgroundColor)] = MapMentionColors,
             //Mentions Commands
             [nameof(MentionEditor.MentionSearchCommand)] = MapMentionSearchCommand,
+            [nameof(MentionEditor.ImageInputCommandProperty)] = MapMentionCommand,
         };
 
     public static readonly CommandMapper<MentionEditor, MentionEditorHandler> CommandMapper =

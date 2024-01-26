@@ -495,5 +495,11 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         // Apparently there's no named value for zero in this case
         return inputMethodManager?.ShowSoftInput(inputView, 0) is true;
     }
+
+    public static void MapMentionCommand(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler?.PlatformView != null)
+            handler.PlatformView.ImageInputCommand = editor.ImageInputCommand;
+    }
 }
 

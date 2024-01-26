@@ -55,7 +55,6 @@ public class SpeakLinkMentionTextView : HKWTextView
         }
     }
 
-
     public UIColor? MentionSelectedTextColor
     {
         get => MentionSelectedAttributes?.TryGetValue(UIStringAttributeKey.ForegroundColor, out var color) == true
@@ -98,9 +97,9 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     private void SendOnMentionSearch(MentionSearchEventArgs e)
     {
-        if(e.ControlCharacter != '\0'.ToString() && _chooserViewVisible == false)
+        if (e.ControlCharacter != '\0'.ToString() && _chooserViewVisible == false)
             SendOnDisplaySuggestionsChanged(true);
-        
+
         MentionSearched?.Invoke(this, e);
     }
 
@@ -172,14 +171,16 @@ public class SpeakLinkMentionTextView : HKWTextView
         set => SetPlaceholderText(value);
     }
 
+    public ICommand? ImageInputCommand { get; set; }
+
     public void SetupMentions(string? explicitCharacters = "@+＠")
     {
         if (string.IsNullOrWhiteSpace(explicitCharacters))
             return;
-        
-        if(_mentionExplicitCharacter == explicitCharacters)
+
+        if (_mentionExplicitCharacter == explicitCharacters)
             return;
-        
+
         _mentionExplicitCharacter = explicitCharacters;
         var characterSet = NSCharacterSet.FromString(explicitCharacters);
         EnableMentionsPluginV2 = true;
@@ -190,21 +191,23 @@ public class SpeakLinkMentionTextView : HKWTextView
             _chooserViewDelegate?.Dispose();
             _stateChangeDelegate?.Dispose();
         }
+
         _mentionsPlugin =
             HKWMentionsPluginV2.MentionsPluginWithChooserMode(
                 HKWMentionsChooserPositionMode.CustomLockBottomNoArrow,
                 characterSet, 1);
         _mentionsPlugin.NotifyTextViewDelegateOnMentionDeletion = true;
         _mentionsPlugin.NotifyTextViewDelegateOnMentionCreation = true;
-        
+
         _chooserViewDelegate = new MentionsHkwMentionsCustomChooserViewDelegate
-        { 
-            MentionSearchCommand = MentionSearchCommand, 
-            OnMentionSearch = SendOnMentionSearch 
+        {
+            MentionSearchCommand = MentionSearchCommand,
+            OnMentionSearch = SendOnMentionSearch
         };
 
-        _stateChangeDelegate = new MentionsHkwMentionsStateChangeDelegate(SendOnDisplaySuggestionsChanged, OnMentionDeleted);
-       
+        _stateChangeDelegate =
+            new MentionsHkwMentionsStateChangeDelegate(SendOnDisplaySuggestionsChanged, OnMentionDeleted);
+
         _mentionsPlugin.CustomChooserViewDelegate = _chooserViewDelegate;
         _mentionsPlugin.StateChangeDelegate = _stateChangeDelegate;
 
@@ -220,13 +223,13 @@ public class SpeakLinkMentionTextView : HKWTextView
         HidePlaceholderIfTextIsPresent(Text);
         if (_ignoreTextChangeNotification)
             return;
-        
+
         TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
     }
 
     public event EventHandler<TextChangedEventArgs>? TextChanged;
 
-    public void MentionSelected(IHKWMentionsEntityProtocol mention) 
+    public void MentionSelected(IHKWMentionsEntityProtocol mention)
         => _mentionsPlugin?.HandleSelectionForEntity(mention);
 
     private void SetPlaceholderText(string value)
@@ -300,5 +303,32 @@ public class SpeakLinkMentionTextView : HKWTextView
         if (baseResult)
             FirstResponderStateChanged?.Invoke(this, true);
         return baseResult;
+    }
+
+    public override bool CanPerform(Selector action, NSObject? withSender)
+    {
+        const string pasteSelectorName = "paste:";
+        if (action?.Name == pasteSelectorName && UIPasteboard.General.Image != null &&
+            ImageInputCommand != null)
+            return true;
+
+        return base.CanPerform(action, withSender);
+    }
+
+    public override async void Paste(NSObject sender)
+    {
+        var pasteboard = UIPasteboard.General;
+        if (pasteboard.DataForPasteboardType(UIPasteboardExtensions.GifSelector) is { Length: > 0 }
+            || (pasteboard.Image != null && (pasteboard.String?.StartsWith("data:image") ?? true)))
+        {
+            var image = await pasteboard.GetImageFromPasteboardAsync();
+            if (ImageInputCommand?.CanExecute(image) ?? false)
+            {
+                ImageInputCommand.Execute(image);
+                return;
+            }
+        }
+
+        base.Paste(sender);
     }
 }
