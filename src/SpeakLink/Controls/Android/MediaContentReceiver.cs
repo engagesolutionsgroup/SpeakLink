@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Windows.Input;
 using Android.Content;
 using Android.Runtime;
-using Android.Views;
 using Android.Webkit;
 using AndroidX.Core.View;
 using IOnReceiveContentListener = AndroidX.Core.View.IOnReceiveContentListener;
@@ -15,10 +14,10 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
 {
     public ICommand? ImageInputCommand { get; set; }
     public static readonly string[] VideoAndImageMimeTypes = ["image/*", "video/*"];
-    public static readonly string[] ImageMimeTypes = [ "image/*" ];
+    public static readonly string[] ImageMimeTypes = ["image/*"];
     private readonly Context context;
 
-    public MediaContentReceiver(IntPtr handle, JniHandleOwnership transfer) 
+    public MediaContentReceiver(IntPtr handle, JniHandleOwnership transfer)
         : base(handle, transfer)
     {
     }
@@ -52,7 +51,7 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
             var filePath = await CopyFileToTmpAsync(clipItemUri);
             var originalMimeType = GetMimeTypeIfFilePath(clipItemUri.Path);
 
-            if(ImageInputCommand?.CanExecute(filePath) ?? false)
+            if (ImageInputCommand?.CanExecute(filePath) ?? false)
                 ImageInputCommand.Execute(filePath);
         }
         catch (Exception ex)
@@ -70,7 +69,7 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
         await using var inputStream = context.ContentResolver?.OpenInputStream(uri);
         if ((inputStream?.Length ?? 0) == 0)
             return null;
-        
+
         var newFilePath = await CopyFileForUploadAsync(inputStream, uri.Path);
 
         return newFilePath;
@@ -85,7 +84,7 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
             return false;
         }
     }
-    
+
     public static string? GetMimeTypeIfFilePath(string path)
     {
         var fileExtension = Path.GetExtension(path);
@@ -99,7 +98,7 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
 
         return null;
     }
-    
+
     public static async Task<string> CopyFileForUploadAsync(Stream inputStream, string originalFilePath)
     {
         if (originalFilePath == null) throw new ArgumentNullException(nameof(originalFilePath));
@@ -127,4 +126,3 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
         return CopyFileForUploadAsync(inputStream, originalFilePath);
     }
 }
-
