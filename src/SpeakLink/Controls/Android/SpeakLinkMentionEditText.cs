@@ -55,7 +55,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         SetMentionSpanConfig(new MentionSpanConfig.Builder().Build());
     }
 
-    private void InvokeOnTextChanged(string? oldValue, string? newValue)
+    protected void InvokeOnTextChanged(string? oldValue, string? newValue)
     {
         if (_ignoreTextChangeNotification)
             return;
@@ -88,7 +88,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
             .SetThreshold(threshold)
             .Build();
         
-        this.Tokenizer = new WordTokenizer(_wordTokenizer);
+        Tokenizer = new WordTokenizer(_wordTokenizer);
 
         SetQueryTokenReceiver(this);
         SetSuggestionsVisibilityManager(this);

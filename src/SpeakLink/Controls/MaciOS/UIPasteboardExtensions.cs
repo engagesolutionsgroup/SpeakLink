@@ -13,7 +13,7 @@ public static class UIPasteboardExtensions
     {
         try
         {
-            NSData? gif = pasteboard.DataForPasteboardType(GifSelector);
+            var gif = pasteboard.DataForPasteboardType(GifSelector);
             if (gif?.Length > 0)
             {
                 var gifFilePath =
@@ -30,7 +30,7 @@ public static class UIPasteboardExtensions
 
             using (img)
             {
-                var data = img.AsPNG() ?? img!.AsJPEG(DefaultCompressionQuality);
+                var data = img.AsPNG() ?? img.AsJPEG(DefaultCompressionQuality);
                 if (data != null)
                 {
                     await using var stream = data.AsStream();

@@ -59,7 +59,7 @@ public partial class MentionEditorHandler
         
     }
 
-    public static void MapFocus(IViewHandler handler, IView mentionEditor, object? args)
+    public new static void MapFocus(IViewHandler handler, IView mentionEditor, object? args)
     {
 
     }

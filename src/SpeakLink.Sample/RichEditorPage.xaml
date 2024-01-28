@@ -5,28 +5,27 @@
              xmlns:sample="clr-namespace:SpeakLink.Sample"
              xmlns:mention="clr-namespace:SpeakLink.Mention;assembly=SpeakLink"
              xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-             x:Class="SpeakLink.Sample.MainPage"
+             xmlns:richText="clr-namespace:SpeakLink.RichText;assembly=SpeakLink"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="SpeakLink.Sample.RichEditorMainPage"
              x:DataType="sample:MentionsViewModel">
     <ContentPage.Resources>
+        <toolkit:BoolToObjectConverter x:Key="BooleanToColorConverter" TrueObject="#8520DF"
+                                       FalseObject="#AA8520DF" />
+        <sample:RichEditorStyleToGlyph x:Key="RichEditorStyleToGlyph" />
         <sample:FormattedStringDescriptionConverter x:Key="FormattedStringDescriptionConverter" />
     </ContentPage.Resources>
-    <ContentPage.BindingContext>
-        <sample:MentionsViewModel />
-    </ContentPage.BindingContext>
-
     <Grid Padding="0,0,0,0" RowDefinitions="*,Auto" IgnoreSafeArea="True">
         <Grid Padding="0,0,0,0" Grid.Row="0" BackgroundColor="Transparent">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="HideKeyboard" />
             </Grid.GestureRecognizers>
-           
+
             <Grid MinimumHeightRequest="200" Margin="8" VerticalOptions="End">
                 <VerticalStackLayout HorizontalOptions="Start"
                                      VerticalOptions="Start"
                                      Spacing="20">
-                    <Label Text="Keyboard Input Image" FontSize="12" FontAttributes="Bold" />
-                    <Image x:Name="KeyboardInputImage" MaximumHeightRequest="200" />
-                    <Label Text="Formatted Text" FontSize="12" FontAttributes="Bold" />
+                    <Label Text="MAUI Formatted Text" FontSize="12" FontAttributes="Bold" />
                     <Label
                         FormattedText="{x:Binding FormattedString}"
                         FontFamily="OpenSansRegular"
@@ -36,9 +35,10 @@
                         VerticalTextAlignment="Start" />
                     <Label Text="Formatted Text Description" FontSize="12" FontAttributes="Bold" />
                     <Label
-                        FormattedText="{x:Binding FormattedString, Converter={StaticResource FormattedStringDescriptionConverter}}"
+                        FormattedText="{x:Binding FormattedString, 
+                            Converter={StaticResource FormattedStringDescriptionConverter}}"
                         FontFamily="OpenSansRegular"
-                        FontSize="14"
+                        FontSize="9"
                         TextColor="Black"
                         HorizontalTextAlignment="Start"
                         VerticalTextAlignment="Start" />
@@ -96,13 +96,43 @@
                   BackgroundColor="LightGray"
                   VerticalOptions="Start"
                   HorizontalOptions="Fill" />
-            <mention:MentionEditor
+            <Grid HeightRequest="44" Margin="0,1,0,0"
+                  VerticalOptions="Start"
+                  BindingContext="{Binding Source={x:Reference MentionEditor}, Path=ToolbarState}">
+                <ScrollView Orientation="Horizontal">
+                    <HorizontalStackLayout BindableLayout.ItemsSource="{x:Binding Styles}"
+                                           x:DataType="richText:RichEditorToolbarState"
+                                           Spacing="4">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="richText:IToolbarSpanStyle">
+                                <Border
+                                    StrokeShape="RoundRectangle 8"
+                                    MinimumWidthRequest="44"
+                                    BackgroundColor="{x:Binding Checked,
+                                      Converter={StaticResource BooleanToColorConverter}}"
+                                    Padding="4">
+                                    <Label
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FormattedText="{x:Binding RichEditorStyle,
+                                          Converter={StaticResource RichEditorStyleToGlyph}}" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{x:Binding ToggleCommand}">
+                                        </TapGestureRecognizer>
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </Grid>
+            <richText:RichEditor
                 x:Name="MentionEditor"
                 FontSize="18"
                 IsVisible="True"
                 BackgroundColor="Transparent"
-                FontFamily="OpenSansRegular"
                 MaximumHeightRequest="134"
+                Margin="0,45,0,0"
                 HorizontalOptions="Fill"
                 MentionSearchCommand="{x:Binding MentionSearchCommand}"
                 IsSuggestionsPopupVisible="{x:Binding IsDisplayingMentions}"

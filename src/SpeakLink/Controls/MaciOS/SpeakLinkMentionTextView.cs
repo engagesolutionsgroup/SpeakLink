@@ -315,7 +315,7 @@ public class SpeakLinkMentionTextView : HKWTextView
         return base.CanPerform(action, withSender);
     }
 
-    public override async void Paste(NSObject sender)
+    public override async void Paste(NSObject? sender)
     {
         var pasteboard = UIPasteboard.General;
         if (pasteboard.DataForPasteboardType(UIPasteboardExtensions.GifSelector) is { Length: > 0 }
