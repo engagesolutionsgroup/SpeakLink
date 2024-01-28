@@ -26,7 +26,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     private string _explicitChars = "@";
     private MentionSpanConfig _mentionSpanConfig;
     private bool _ignoreTextChangeNotification;
-    private ICommand? imageInputCommand;
+    private ICommand? _imageInputCommand;
 
 
     protected SpeakLinkMentionEditText(IntPtr javaReference, JniHandleOwnership transfer)
@@ -146,7 +146,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
 
     public ICommand? ImageInputCommand
     {
-        get => imageInputCommand;
+        get => _imageInputCommand;
         set => SetupContentReceiverWithCommand(value);
     }
 
@@ -155,19 +155,19 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         if (!OperatingSystem.IsAndroidVersionAtLeast(21))
             return;
         
-        if (imageInputCommand != null && value == null)
+        if (_imageInputCommand != null && value == null)
         {
             ViewCompat.SetOnReceiveContentListener(this, MediaContentReceiver.ImageMimeTypes, null);
         }
         if (value != null)
         {
-            imageInputCommand = value;
+            _imageInputCommand = value;
             ViewCompat.SetOnReceiveContentListener(
                 this,
                 MediaContentReceiver.ImageMimeTypes,
                 new MediaContentReceiver(Context!)
                 {
-                    ImageInputCommand = imageInputCommand
+                    ImageInputCommand = _imageInputCommand
                 }
             );
         }

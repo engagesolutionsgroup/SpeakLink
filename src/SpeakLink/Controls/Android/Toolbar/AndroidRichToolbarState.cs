@@ -18,19 +18,21 @@ public class AndroidRichToolbarState : RichEditorToolbarState, IRichEditorToolba
     {
         _italicSpanStyle = new InlineToolbarSpanStyle<SpeakLinkItalicSpan>(owner, RichEditorStyle.Italic);
         _boldSpanStyle = new InlineToolbarSpanStyle<SpeakLinkBoldSpan>(owner, RichEditorStyle.Bold);
-        _strikethroughSpanStyle = new InlineToolbarSpanStyle<SpeakLinkStrikethroughSpan>(owner, RichEditorStyle.Strikethrough);
+        _strikethroughSpanStyle =
+            new InlineToolbarSpanStyle<SpeakLinkStrikethroughSpan>(owner, RichEditorStyle.Strikethrough);
         _underlineSpanStyle = new InlineToolbarSpanStyle<SpeakLinkUnderlineSpan>(owner, RichEditorStyle.Underline);
-        _subscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSubscriptSpan>(owner, RichEditorStyle.Subscript);
-        _superscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSuperscriptSpan>(owner, RichEditorStyle.Superscript);
+        //_subscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSubscriptSpan>(owner, RichEditorStyle.Subscript);
+        // _superscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSuperscriptSpan>(owner, RichEditorStyle.Superscript);
         _linkSpanStyle = new SpeakLinkToolbarLinkSpanStyle(owner);
 
-        Styles = [
+        Styles =
+        [
             _boldSpanStyle,
-            _italicSpanStyle, 
+            _italicSpanStyle,
             _strikethroughSpanStyle,
             _underlineSpanStyle,
-            _subscriptSpanStyle, 
-            _superscriptSpanStyle,
+            // _subscriptSpanStyle, 
+            // _superscriptSpanStyle,
             _linkSpanStyle
         ];
     }

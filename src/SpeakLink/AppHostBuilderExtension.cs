@@ -9,7 +9,7 @@ public static class AppHostBuilderExtension
 {
     public static MauiAppBuilder UseSpeakLink(this MauiAppBuilder builder)
     {
-        builder.Services.AddSingleton<ILinkEditorDialogInvoker, LinkEditorDialogInvoker>();
+        builder.Services.AddSingleton<ILinkEditorDialogHandler, LinkEditorDialogHandler>();
         return builder.ConfigureMauiHandlers(handlerCollection =>
         {
             handlerCollection.AddHandler<MentionEditor, MentionEditorHandler>();

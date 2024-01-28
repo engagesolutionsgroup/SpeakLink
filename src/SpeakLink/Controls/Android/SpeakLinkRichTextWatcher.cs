@@ -8,9 +8,9 @@ namespace SpeakLink.Controls.Android;
 public class SpeakLinkRichTextWatcher : Java.Lang.Object, ITextWatcher
 {
     private readonly Action<string?, string?>? _textChangedCallback;
-    private bool ignoreNextTextChange = false;
-    private int inputStartPosition = 0;
-    private int inputEndPosition = 0;
+    private bool _ignoreNextTextChange = false;
+    private int _inputStartPosition = 0;
+    private int _inputEndPosition = 0;
     private string? _beforeTextChanged;
 
     public AndroidRichToolbarState EngageRichToolbarState { get; }
@@ -28,30 +28,30 @@ public class SpeakLinkRichTextWatcher : Java.Lang.Object, ITextWatcher
 
     public void AfterTextChanged(IEditable? sequence)
     {
-        if (ignoreNextTextChange) 
+        if (_ignoreNextTextChange) 
             return;
 
         Log($"AfterTextChanged:| {sequence?.ToString() ?? "NULL" }");
 
 
-        if (inputEndPosition <= inputStartPosition)
+        if (_inputEndPosition <= _inputStartPosition)
         {
-            Log($"After Text Change Delete: start {inputStartPosition} end {inputEndPosition} ");
+            Log($"After Text Change Delete: start {_inputStartPosition} end {_inputEndPosition} ");
         }
 
         foreach (var selectedStyle in EngageRichToolbarState.Styles)
         {
-            selectedStyle.ApplyStyle(sequence, inputStartPosition, inputEndPosition);
+            selectedStyle.ApplyStyle(sequence, _inputStartPosition, _inputEndPosition);
         }
         
-        if(!ignoreNextTextChange)
+        if(!_ignoreNextTextChange)
             _textChangedCallback?.Invoke(_beforeTextChanged, sequence?.ToString());
     }
 
     public void BeforeTextChanged(ICharSequence? sequence, int start, int count, int after)
     {
         _beforeTextChanged = sequence?.ToString();
-        if (ignoreNextTextChange)
+        if (_ignoreNextTextChange)
             return;
 
         Log($"BeforeTextChanged:| Sequence {sequence}, Start {start}, Count {count}, After {after}");
@@ -59,18 +59,18 @@ public class SpeakLinkRichTextWatcher : Java.Lang.Object, ITextWatcher
 
     public void OnTextChanged(ICharSequence? sequence, int start, int before, int count)
     {
-        if (ignoreNextTextChange)
+        if (_ignoreNextTextChange)
             return;
 
         Log($"OnTextChanged:| Sequence {sequence}, Start {start}, Count {count}, Before {before}");
         
-        inputStartPosition = start;
-        inputEndPosition = start + count;
+        _inputStartPosition = start;
+        _inputEndPosition = start + count;
     }
     
     public void IgnoreNextTextChange(bool ignore) 
     {
-        ignoreNextTextChange = ignore;
+        _ignoreNextTextChange = ignore;
     }
 
     private static void Log(string message) 

@@ -15,7 +15,7 @@ public class SpeakLinkRichEditText : SpeakLinkMentionEditText
 {
     private SpeakLinkRichTextWatcher _richTextWatcher;
     public AndroidRichToolbarState? ToolbarState { get; set; }
-    public ILinkEditorDialogInvoker LinkEditorDialogInvoker { get; set; }
+    public ILinkEditorDialogHandler LinkEditorDialogHandler { get; set; }
 
     protected SpeakLinkRichEditText(IntPtr javaReference, JniHandleOwnership transfer) 
         : base(javaReference, transfer)

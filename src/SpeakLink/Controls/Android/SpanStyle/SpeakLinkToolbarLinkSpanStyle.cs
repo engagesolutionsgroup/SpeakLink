@@ -29,7 +29,7 @@ public partial class SpeakLinkToolbarLinkSpanStyle : IAndroidToolbarSpanStyle
     public async void Toggle()
     {
         var (link, text) = GetLinkTextFromSelection();
-        var linkDialogResult = await (ParentEditText?.LinkEditorDialogInvoker?.ShowLinkDialogAsync(text, link) ??
+        var linkDialogResult = await (ParentEditText?.LinkEditorDialogHandler?.ShowLinkDialogAsync(text, link) ??
                                       Task.FromResult(new LinkDialogResult()));
         if(linkDialogResult.Cancelled)
             return;

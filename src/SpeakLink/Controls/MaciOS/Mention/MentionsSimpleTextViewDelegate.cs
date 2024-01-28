@@ -7,11 +7,14 @@ namespace SpeakLink.Controls.MaciOS;
 public class MentionsSimpleTextViewDelegate : UITextViewDelegate
 {
     private string? _textBefore;
-    private readonly Action<string?, string?>? _action;
-    
-    public MentionsSimpleTextViewDelegate(Action<string?, string?> action)
+    private readonly Action<string?, string?>? _textChangedAction;
+    private readonly Action? _selectionChanged;
+
+    public MentionsSimpleTextViewDelegate(Action<string?, string?> textChangedAction,
+        Action? selectionChanged)
     {
-        _action = action;
+        _textChangedAction = textChangedAction;
+        _selectionChanged = selectionChanged;
     }
 
     public MentionsSimpleTextViewDelegate()
@@ -26,14 +29,13 @@ public class MentionsSimpleTextViewDelegate : UITextViewDelegate
     {
     }
 
-    public override bool ShouldChangeText(UITextView textView, NSRange range, string text)
-    {
-        _textBefore = textView.Text;
-        return true;
-    }
-
     public override void Changed(UITextView textView)
     {
-        _action?.Invoke(_textBefore, textView.Text);
+        _textChangedAction?.Invoke(_textBefore, textView.Text);
+    }
+
+    public override void SelectionChanged(UITextView textView)
+    {
+        _selectionChanged?.Invoke();
     }
 }

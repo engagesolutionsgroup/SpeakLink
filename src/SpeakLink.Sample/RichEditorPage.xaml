@@ -126,6 +126,36 @@
                     </HorizontalStackLayout>
                 </ScrollView>
             </Grid>
+            <Grid HeightRequest="44" Margin="0,1,0,0"
+                  VerticalOptions="Start"
+                  BindingContext="{Binding Source={x:Reference MentionEditor}, Path=ToolbarState}">
+                <ScrollView Orientation="Horizontal">
+                    <HorizontalStackLayout BindableLayout.ItemsSource="{x:Binding Styles}"
+                                           x:DataType="richText:RichEditorToolbarState"
+                                           Spacing="4">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="richText:IToolbarSpanStyle">
+                                <Border
+                                    StrokeShape="RoundRectangle 8"
+                                    MinimumWidthRequest="44"
+                                    BackgroundColor="{x:Binding Checked,
+                                      Converter={StaticResource BooleanToColorConverter}}"
+                                    Padding="4">
+                                    <Label
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FormattedText="{x:Binding RichEditorStyle,
+                                          Converter={StaticResource RichEditorStyleToGlyph}}" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{x:Binding ToggleCommand}">
+                                        </TapGestureRecognizer>
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </Grid>
             <richText:RichEditor
                 x:Name="MentionEditor"
                 FontSize="18"
@@ -134,6 +164,7 @@
                 MaximumHeightRequest="134"
                 Margin="0,45,0,0"
                 HorizontalOptions="Fill"
+                FontFamily="OpenSansRegular"
                 MentionSearchCommand="{x:Binding MentionSearchCommand}"
                 IsSuggestionsPopupVisible="{x:Binding IsDisplayingMentions}"
                 ExplicitCharacters="@"

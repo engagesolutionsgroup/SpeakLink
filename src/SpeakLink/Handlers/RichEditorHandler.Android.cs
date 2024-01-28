@@ -19,8 +19,8 @@ public partial class RichEditorHandler
         {
             VirtualView.ToolbarState = richEditText.ToolbarState!;
 
-            if (MauiContext?.Services.GetService<ILinkEditorDialogInvoker>() is { } linkEditorDialogInvoker)
-                richEditText.LinkEditorDialogInvoker = linkEditorDialogInvoker;
+            if (MauiContext?.Services.GetService<ILinkEditorDialogHandler>() is { } linkEditorDialogInvoker)
+                richEditText.LinkEditorDialogHandler = linkEditorDialogInvoker;
         }
     }
 }

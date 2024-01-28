@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SpeakLink.Sample.RootPage"
+             Title="">
+    <ContentPage.Content>
+        <Grid>
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="16" VerticalOptions="Center">
+                <Button Text="Mentions" Clicked="NavigateToMainPage" />
+                <Button Text="Rich Editor + Mentions" Clicked="NavigateToRichEditorPage" />
+            </VerticalStackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

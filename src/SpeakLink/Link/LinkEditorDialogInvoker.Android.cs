@@ -5,10 +5,10 @@ using View = Android.Views.View;
 
 namespace SpeakLink.Link;
 
-public partial class LinkEditorDialogInvoker 
+public partial class LinkEditorDialogHandler 
 {
     private readonly Context _context;
-    private AlertDialog? dialog;
+    private AlertDialog? _dialog;
     
     public Task<LinkDialogResult> ShowLinkDialogAsync(string? existingText, string? existingUrl)
     {
@@ -33,17 +33,17 @@ public partial class LinkEditorDialogInvoker
                     dialogResult.Text = textEditText!.Text!;
                     dialogResult.Url = urlEditText!.Text!;
                     taskCompletionSource.TrySetResult(dialogResult);
-                    dialog?.Dismiss();
+                    _dialog?.Dismiss();
                 }).SetNegativeButton("Cancel", (_, _) =>
                 {
                     dialogResult.Cancelled = true;
                     taskCompletionSource.TrySetResult(dialogResult);
-                    dialog?.Dismiss();
+                    _dialog?.Dismiss();
                 });
         
-        dialog = builder!.Create();
-        dialog.DismissEvent += (sender, args) => taskCompletionSource.TrySetResult(dialogResult);
-        dialog!.Show();
+        _dialog = builder!.Create();
+        _dialog.DismissEvent += (sender, args) => taskCompletionSource.TrySetResult(dialogResult);
+        _dialog!.Show();
 
         return taskCompletionSource.Task;
     }

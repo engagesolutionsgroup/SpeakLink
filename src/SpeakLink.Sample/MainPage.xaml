@@ -7,6 +7,7 @@
              xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="SpeakLink.Sample.MainPage"
              x:DataType="sample:MentionsViewModel">
+    
     <ContentPage.Resources>
         <sample:FormattedStringDescriptionConverter x:Key="FormattedStringDescriptionConverter" />
     </ContentPage.Resources>
@@ -14,19 +15,19 @@
         <sample:MentionsViewModel />
     </ContentPage.BindingContext>
 
+    
     <Grid Padding="0,0,0,0" RowDefinitions="*,Auto" IgnoreSafeArea="True">
         <Grid Padding="0,0,0,0" Grid.Row="0" BackgroundColor="Transparent">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="HideKeyboard" />
             </Grid.GestureRecognizers>
-           
             <Grid MinimumHeightRequest="200" Margin="8" VerticalOptions="End">
                 <VerticalStackLayout HorizontalOptions="Start"
                                      VerticalOptions="Start"
                                      Spacing="20">
                     <Label Text="Keyboard Input Image" FontSize="12" FontAttributes="Bold" />
                     <Image x:Name="KeyboardInputImage" MaximumHeightRequest="200" />
-                    <Label Text="Formatted Text" FontSize="12" FontAttributes="Bold" />
+                    <Label Text="Formatted Text" FontSize="12" FontAttributes="Italic" />
                     <Label
                         FormattedText="{x:Binding FormattedString}"
                         FontFamily="OpenSansRegular"

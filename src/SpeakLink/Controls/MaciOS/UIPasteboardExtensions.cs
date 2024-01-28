@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Foundation;
+using LinkedIn.Hakawai;
 using UIKit;
 
 namespace SpeakLink.Controls.MaciOS;
@@ -56,5 +57,15 @@ public static class UIPasteboardExtensions
         }
 
         return null;
+    }
+}
+
+public static class RichTextViewExtensions
+{
+    public static void TransformTextAtRange(this SpeakLinkRichTextView richTextView, NSRange range,
+        Func<NSAttributedString, NSAttributedString> transform)
+    {
+        HKWTextView_TextTransformation.TransformTextAtRange(richTextView, range, transform);
+        richTextView.RaiseFormattedTextChanged();
     }
 }
