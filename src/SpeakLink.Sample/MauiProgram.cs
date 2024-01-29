@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
 
 namespace SpeakLink.Sample;
 
@@ -9,10 +10,14 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("OpenSans-Italic.ttf", "OpenSansItalic");
+                fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");
+                fonts.AddFont("OpenSans-BoldItalic.ttf", "OpenSansBoldItalic");
             })
             .UseSpeakLink();
 

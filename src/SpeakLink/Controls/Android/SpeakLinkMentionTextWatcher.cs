@@ -26,11 +26,10 @@ public class SpeakLinkMentionTextWatcher : Java.Lang.Object, ITextWatcher
 
     public void BeforeTextChanged(ICharSequence? s, int start, int count, int after)
     {
-        _beforeTextChanged = s.ToString();
+        _beforeTextChanged = s?.ToString();
     }
 
     public void OnTextChanged(ICharSequence? s, int start, int before, int count)
     {
-       
     }
 }

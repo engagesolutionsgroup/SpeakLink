@@ -19,9 +19,11 @@ public class SpeakLinkMentionTextView : HKWTextView
     private MentionsHkwMentionsCustomChooserViewDelegate? _chooserViewDelegate;
     private MentionsHkwMentionsStateChangeDelegate? _stateChangeDelegate;
     private bool _chooserViewVisible;
-    private bool _ignoreTextChangeNotification;
+
     private UILabel? _placeholderLabel;
     private string? _mentionExplicitCharacter;
+    
+    protected bool IgnoreTextChangeNotification;
 
     public event EventHandler<MentionSearchEventArgs>? MentionSearched;
     public event EventHandler<bool>? DisplaySuggestionChanged;
@@ -109,28 +111,24 @@ public class SpeakLinkMentionTextView : HKWTextView
         DisplaySuggestionChanged?.Invoke(this, newState);
     }
 
-    public SpeakLinkMentionTextView()
-    {
-    }
+    public SpeakLinkMentionTextView() => Initialize();
 
-    public SpeakLinkMentionTextView(NSCoder coder) : base(coder)
-    {
-    }
+    public SpeakLinkMentionTextView(NSCoder coder) : base(coder)=> Initialize();
 
-    protected SpeakLinkMentionTextView(NSObjectFlag t) : base(t)
-    {
-    }
+    protected SpeakLinkMentionTextView(NSObjectFlag t) : base(t)=> Initialize();
 
     protected internal SpeakLinkMentionTextView(NativeHandle handle) : base(handle)
     {
     }
 
-    public SpeakLinkMentionTextView(CGRect frame, NSTextContainer? textContainer) : base(frame, textContainer)
-    {
-    }
+    public SpeakLinkMentionTextView(CGRect frame, NSTextContainer? textContainer) 
+        : base(frame, textContainer) => Initialize();
 
-    public SpeakLinkMentionTextView(CGRect frame) : base(frame)
+    public SpeakLinkMentionTextView(CGRect frame) : base(frame) => Initialize();
+
+    protected virtual void Initialize()
     {
+        
     }
 
     public bool IsMentionsEnabled { get; set; }
@@ -143,9 +141,9 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     public void SetText(string text)
     {
-        _ignoreTextChangeNotification = true;
+        IgnoreTextChangeNotification = true;
         Text = text;
-        _ignoreTextChangeNotification = false;
+        IgnoreTextChangeNotification = false;
     }
 
     public ICommand? MentionSearchCommand
@@ -212,16 +210,16 @@ public class SpeakLinkMentionTextView : HKWTextView
         _mentionsPlugin.StateChangeDelegate = _stateChangeDelegate;
 
         ControlFlowPlugin = _mentionsPlugin;
-        WeakExternalDelegate = new MentionsSimpleTextViewDelegate(OnTextChangedDelegate);
+        WeakExternalDelegate = new MentionsSimpleTextViewDelegate(OnTextChangedDelegate, OnSelectionChanged);
     }
 
-    private void OnMentionDeleted(HKWMentionsPlugin arg1, HKWMentionsEntityProtocol arg2)
+    private void OnMentionDeleted(HKWMentionsPlugin mentionsPlugin, HKWMentionsEntityProtocol entity)
         => OnTextChangedDelegate(null, Text);
 
     internal void OnTextChangedDelegate(string? oldValue, string? newValue)
     {
         HidePlaceholderIfTextIsPresent(Text);
-        if (_ignoreTextChangeNotification)
+        if (IgnoreTextChangeNotification)
             return;
 
         TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
@@ -278,7 +276,7 @@ public class SpeakLinkMentionTextView : HKWTextView
     private UILabel CreatePlaceholderLabel() =>
         new()
         {
-            Font = Font,
+            Font = Font ?? UIFont.PreferredCaption1,
             TextColor = UIColor.LightGray
         };
 
@@ -315,7 +313,7 @@ public class SpeakLinkMentionTextView : HKWTextView
         return base.CanPerform(action, withSender);
     }
 
-    public override async void Paste(NSObject sender)
+    public override async void Paste(NSObject? sender)
     {
         var pasteboard = UIPasteboard.General;
         if (pasteboard.DataForPasteboardType(UIPasteboardExtensions.GifSelector) is { Length: > 0 }
@@ -330,5 +328,10 @@ public class SpeakLinkMentionTextView : HKWTextView
         }
 
         base.Paste(sender);
+    }
+
+    protected virtual void OnSelectionChanged()
+    {
+        
     }
 }

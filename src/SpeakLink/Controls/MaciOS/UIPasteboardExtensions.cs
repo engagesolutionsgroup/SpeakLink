@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Foundation;
+using LinkedIn.Hakawai;
 using UIKit;
 
 namespace SpeakLink.Controls.MaciOS;
@@ -13,7 +14,7 @@ public static class UIPasteboardExtensions
     {
         try
         {
-            NSData? gif = pasteboard.DataForPasteboardType(GifSelector);
+            var gif = pasteboard.DataForPasteboardType(GifSelector);
             if (gif?.Length > 0)
             {
                 var gifFilePath =
@@ -30,7 +31,7 @@ public static class UIPasteboardExtensions
 
             using (img)
             {
-                var data = img.AsPNG() ?? img!.AsJPEG(DefaultCompressionQuality);
+                var data = img.AsPNG() ?? img.AsJPEG(DefaultCompressionQuality);
                 if (data != null)
                 {
                     await using var stream = data.AsStream();
@@ -56,5 +57,15 @@ public static class UIPasteboardExtensions
         }
 
         return null;
+    }
+}
+
+public static class RichTextViewExtensions
+{
+    public static void TransformTextAtRange(this SpeakLinkRichTextView richTextView, NSRange range,
+        Func<NSAttributedString, NSAttributedString> transform)
+    {
+        HKWTextView_TextTransformation.TransformTextAtRange(richTextView, range, transform);
+        richTextView.RaiseFormattedTextChanged();
     }
 }

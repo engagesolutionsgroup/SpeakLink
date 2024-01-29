@@ -28,7 +28,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         handler.PlatformView.Font = nativeFont;
         handler.PlatformView.TransformTypingAttributesWithTransformer(x =>
         {
-            var newTypingAttributes = new NSMutableDictionary(x);
+            var newTypingAttributes = x != null ? new NSMutableDictionary(x) : new();
             if (newTypingAttributes.ContainsKey(UIStringAttributeKey.Font))
                 newTypingAttributes[UIStringAttributeKey.Font] = nativeFont;
 
@@ -227,7 +227,6 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                     span.FontAttributes |= FontAttributes.Bold;
                 if (font.FontDescriptor.SymbolicTraits.HasFlag(UIFontDescriptorSymbolicTraits.Italic))
                     span.FontAttributes |= FontAttributes.Italic;
-
                 if (font.PointSize != linkMentionsEditText.Font?.PointSize)
                     span.FontSize = font.PointSize;
             }
@@ -238,19 +237,22 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                 span.TextColor = foregroundColor.ToColor();
             }
 
-            if (attributes?.ContainsKey(UIStringAttributeKey.UnderlineStyle) ?? false)
+            if ((attributes?.ContainsKey(UIStringAttributeKey.UnderlineStyle) ?? false)
+                && attributes[UIStringAttributeKey.UnderlineStyle] is NSNumber { Int32Value: 1 })
             {
                 span.TextDecorations |= TextDecorations.Underline;
             }
 
-            if (attributes?.ContainsKey(UIStringAttributeKey.StrikethroughStyle) ?? false)
+            if ((attributes?.ContainsKey(UIStringAttributeKey.StrikethroughStyle) ?? false)
+                && attributes[UIStringAttributeKey.StrikethroughStyle] is NSNumber { Int32Value: 1 })
             {
                 span.TextDecorations |= TextDecorations.Strikethrough;
             }
 
-            if (attributes?.ContainsKey(UIStringAttributeKey.BackgroundColor) ?? false)
+            if ((attributes?.ContainsKey(UIStringAttributeKey.BackgroundColor) ?? false)
+                && attributes[UIStringAttributeKey.ForegroundColor] is UIColor backgroundColor)
             {
-                span.BackgroundColor = ((UIColor)attributes[UIStringAttributeKey.BackgroundColor]).ToColor();
+                span.BackgroundColor = backgroundColor.ToColor();
             }
 
             formattedString.Spans.Add(span);

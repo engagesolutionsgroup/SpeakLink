@@ -15,16 +15,16 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
     public ICommand? ImageInputCommand { get; set; }
     public static readonly string[] VideoAndImageMimeTypes = ["image/*", "video/*"];
     public static readonly string[] ImageMimeTypes = ["image/*"];
-    private readonly Context context;
+    private readonly Context? _context;
 
     public MediaContentReceiver(IntPtr handle, JniHandleOwnership transfer)
         : base(handle, transfer)
     {
     }
 
-    public MediaContentReceiver(Context context)
+    public MediaContentReceiver(Context? context)
     {
-        this.context = context;
+        this._context = context;
     }
 
     public ContentInfoCompat? OnReceiveContent(View view, ContentInfoCompat payload)
@@ -66,11 +66,11 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
 
     private async Task<string?> CopyFileToTmpAsync(Uri uri)
     {
-        await using var inputStream = context.ContentResolver?.OpenInputStream(uri);
+        await using var inputStream = _context?.ContentResolver?.OpenInputStream(uri);
         if ((inputStream?.Length ?? 0) == 0)
             return null;
 
-        var newFilePath = await CopyFileForUploadAsync(inputStream, uri.Path);
+        var newFilePath = await CopyFileForUploadAsync(inputStream!, uri.Path!);
 
         return newFilePath;
     }
@@ -101,20 +101,20 @@ public class MediaContentReceiver : Java.Lang.Object, IOnReceiveContentListener
 
     public static async Task<string> CopyFileForUploadAsync(Stream inputStream, string originalFilePath)
     {
-        if (originalFilePath == null) throw new ArgumentNullException(nameof(originalFilePath));
+        ArgumentNullException.ThrowIfNull(originalFilePath);
 
         originalFilePath = Path.GetFileName(originalFilePath);
         var documents = FileSystem.CacheDirectory;
         var newFilePath = Path.Combine(documents, "upload", originalFilePath);
 
-        var filePathDirectory = Path.GetDirectoryName(newFilePath);
+        var filePathDirectory = Path.GetDirectoryName(newFilePath)!;
         if (!Directory.Exists(filePathDirectory))
             Directory.CreateDirectory(filePathDirectory);
 
         if (File.Exists(newFilePath))
             File.Delete(newFilePath);
 
-        using var writeStream = File.OpenWrite(newFilePath);
+        await using var writeStream = File.OpenWrite(newFilePath);
         await inputStream.CopyToAsync(writeStream);
 
         return newFilePath;
