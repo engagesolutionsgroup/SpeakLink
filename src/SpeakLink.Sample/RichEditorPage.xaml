@@ -3,20 +3,18 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sample="clr-namespace:SpeakLink.Sample"
-             xmlns:mention="clr-namespace:SpeakLink.Mention;assembly=SpeakLink"
-             xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              xmlns:richText="clr-namespace:SpeakLink.RichText;assembly=SpeakLink"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="SpeakLink.Sample.RichEditorMainPage"
              x:DataType="sample:MentionsViewModel">
     <ContentPage.Resources>
         <toolkit:BoolToObjectConverter x:Key="BooleanToColorConverter" TrueObject="#8520DF"
-                                       FalseObject="#AA8520DF" />
+                                       FalseObject="#0F8520DF" />
         <sample:RichEditorStyleToGlyph x:Key="RichEditorStyleToGlyph" />
         <sample:FormattedStringDescriptionConverter x:Key="FormattedStringDescriptionConverter" />
     </ContentPage.Resources>
     <Grid Padding="0,0,0,0" RowDefinitions="*,Auto" IgnoreSafeArea="True">
-        <Grid Padding="0,0,0,0" Grid.Row="0" BackgroundColor="Transparent">
+        <Grid Padding="0,0,0,0" Grid.Row="0" BackgroundColor="Transparent" x:Name="TopContent">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="HideKeyboard" />
             </Grid.GestureRecognizers>
@@ -91,78 +89,19 @@
                 </CollectionView>
             </Border>
         </Grid>
-        <Grid Grid.Row="1" Padding="0,0,0,20">
+        <VerticalStackLayout Grid.Row="1" Padding="0,0,0,20"
+                             x:Name="BottomInputLayout">
             <Grid HeightRequest="{OnPlatform Android=1, iOS=0.5}"
                   BackgroundColor="LightGray"
                   VerticalOptions="Start"
                   HorizontalOptions="Fill" />
-            <Grid HeightRequest="44" Margin="0,1,0,0"
-                  VerticalOptions="Start"
-                  BindingContext="{Binding Source={x:Reference MentionEditor}, Path=ToolbarState}">
-                <ScrollView Orientation="Horizontal">
-                    <HorizontalStackLayout BindableLayout.ItemsSource="{x:Binding Styles}"
-                                           x:DataType="richText:RichEditorToolbarState"
-                                           Spacing="4">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="richText:IToolbarSpanStyle">
-                                <Border
-                                    StrokeShape="RoundRectangle 8"
-                                    MinimumWidthRequest="44"
-                                    BackgroundColor="{x:Binding Checked,
-                                      Converter={StaticResource BooleanToColorConverter}}"
-                                    Padding="4">
-                                    <Label
-                                        HorizontalOptions="Center"
-                                        VerticalOptions="Center"
-                                        FormattedText="{x:Binding RichEditorStyle,
-                                          Converter={StaticResource RichEditorStyleToGlyph}}" />
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{x:Binding ToggleCommand}">
-                                        </TapGestureRecognizer>
-                                    </Border.GestureRecognizers>
-                                </Border>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </HorizontalStackLayout>
-                </ScrollView>
-            </Grid>
-            <Grid HeightRequest="44" Margin="0,1,0,0"
-                  VerticalOptions="Start"
-                  BindingContext="{Binding Source={x:Reference MentionEditor}, Path=ToolbarState}">
-                <ScrollView Orientation="Horizontal">
-                    <HorizontalStackLayout BindableLayout.ItemsSource="{x:Binding Styles}"
-                                           x:DataType="richText:RichEditorToolbarState"
-                                           Spacing="4">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="richText:IToolbarSpanStyle">
-                                <Border
-                                    StrokeShape="RoundRectangle 8"
-                                    MinimumWidthRequest="44"
-                                    BackgroundColor="{x:Binding Checked,
-                                      Converter={StaticResource BooleanToColorConverter}}"
-                                    Padding="4">
-                                    <Label
-                                        HorizontalOptions="Center"
-                                        VerticalOptions="Center"
-                                        FormattedText="{x:Binding RichEditorStyle,
-                                          Converter={StaticResource RichEditorStyleToGlyph}}" />
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{x:Binding ToggleCommand}">
-                                        </TapGestureRecognizer>
-                                    </Border.GestureRecognizers>
-                                </Border>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </HorizontalStackLayout>
-                </ScrollView>
-            </Grid>
             <richText:RichEditor
-                x:Name="MentionEditor"
+                x:Name="RichEditor"
                 FontSize="18"
                 IsVisible="True"
                 BackgroundColor="Transparent"
                 MaximumHeightRequest="134"
-                Margin="0,45,0,0"
+                Margin="0,1,0,0"
                 HorizontalOptions="Fill"
                 FontFamily="OpenSansRegular"
                 MentionSearchCommand="{x:Binding MentionSearchCommand}"
@@ -176,6 +115,37 @@
                 AutoSize="TextChanges"
                 FormattedText="{x:Binding FormattedString}"
                 AutomationId="Mention" />
-        </Grid>
+
+            <Grid HeightRequest="44" Margin="0,0,0,0"
+                  VerticalOptions="Start"
+                  BindingContext="{Binding Source={x:Reference RichEditor}, Path=ToolbarState}">
+                <ScrollView Orientation="Horizontal">
+                    <HorizontalStackLayout BindableLayout.ItemsSource="{x:Binding Styles}"
+                                           x:DataType="richText:RichEditorToolbarState"
+                                           Spacing="4">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="richText:IToolbarSpanStyle">
+                                <Border
+                                    StrokeShape="RoundRectangle 8"
+                                    MinimumWidthRequest="44"
+                                    BackgroundColor="{x:Binding Checked,
+                                      Converter={StaticResource BooleanToColorConverter}}"
+                                    Padding="4">
+                                    <Label
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FormattedText="{x:Binding RichEditorStyle,
+                                          Converter={StaticResource RichEditorStyleToGlyph}}" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{x:Binding ToggleCommand}">
+                                        </TapGestureRecognizer>
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </Grid>
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>
