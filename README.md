@@ -49,3 +49,24 @@ The SpeakLink Mention Editor is an advanced .NET MAUI library that enhances text
 ## Image Insert
 Use ImageInsertCommand that passes string as filePath that user wants to insert
 ![GIF image that insert support on Android](/gif/android_insert.gif)
+
+## Rich Editor [0.2.0]
+https://github.com/engagesolutionsgroup/SpeakLink/assets/3391032/a272e7fc-b54f-49a9-915b-720f4b309575
+
+### Supported features
+
+| Format  | Supports |
+| ------------- | ------------- |
+| Mentions  | Yes |
+| Bold  | Yes |
+| Italic  | Yes  |
+| Underline  | Yes |
+| Strikethrough  | Yes  |
+| Bold  | Yes |
+| Custom Links  | Yes  |
+| Custom Foreground Color  | Not yet  |
+| Custom Background Color  | Not yet  |
+| Link Auto Detect and highlight  | Not yet |
+
+Ideally, we want to implement all text styling features provided in FormattedString MAUI default control.
+To show and define style for formatting buttons that allow the user to toggle some style, use the RichToolbarState property declared in the RichEditor control. For example, see the RichEditor sample page in the Sample project.
