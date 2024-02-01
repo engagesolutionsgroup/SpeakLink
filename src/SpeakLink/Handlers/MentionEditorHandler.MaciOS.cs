@@ -73,8 +73,14 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         platform.TextChanged += OnTextChanged;
         platform.DisplaySuggestionChanged += DisplaySuggestionChanged;
         platform.FirstResponderStateChanged += FirstResponderStateChanged;
+        platform.CursorSelectionChanged += CursorSelectionChanged;
         platform.SetupMentions();
         platform.ScrollEnabled = true;
+    }
+
+    private void CursorSelectionChanged(object? sender, (int selStart, int selEnd) e)
+    {
+        ElementController?.SendSelectionChanged(e.selStart, e.selEnd);
     }
 
     private void OnTextChanged(object? sender, TextChangedEventArgs e)
@@ -101,6 +107,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         platform.DisplaySuggestionChanged -= DisplaySuggestionChanged;
         platform.TextChanged -= OnTextChanged;
         platform.FirstResponderStateChanged -= FirstResponderStateChanged;
+        platform.CursorSelectionChanged -= CursorSelectionChanged;
         base.DisconnectHandler(platform);
     }
 
@@ -346,5 +353,17 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         if (handler?.PlatformView != null)
             handler.PlatformView.ImageInputCommand = editor.ImageInputCommand;
+    }
+
+    private static void MapSelectionLength(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler.PlatformView != null && handler.PlatformView.SelectedRange.Length != editor.SelectionLength)
+            handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
+    }
+
+    private static void MapCursorPosition(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler.PlatformView != null && handler.PlatformView.SelectedRange.Location != editor.CursorPosition)
+            handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
     }
 }

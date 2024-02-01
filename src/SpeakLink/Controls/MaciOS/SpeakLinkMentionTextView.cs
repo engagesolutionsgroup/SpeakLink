@@ -22,12 +22,13 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     private UILabel? _placeholderLabel;
     private string? _mentionExplicitCharacter;
-    
+
     protected bool IgnoreTextChangeNotification;
 
     public event EventHandler<MentionSearchEventArgs>? MentionSearched;
     public event EventHandler<bool>? DisplaySuggestionChanged;
     public event EventHandler<bool>? FirstResponderStateChanged;
+    public event EventHandler<(int selStart, int selEnd)>? CursorSelectionChanged;
 
 
     public NSDictionary? MentionUnselectedAttributes
@@ -113,22 +114,21 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     public SpeakLinkMentionTextView() => Initialize();
 
-    public SpeakLinkMentionTextView(NSCoder coder) : base(coder)=> Initialize();
+    public SpeakLinkMentionTextView(NSCoder coder) : base(coder) => Initialize();
 
-    protected SpeakLinkMentionTextView(NSObjectFlag t) : base(t)=> Initialize();
+    protected SpeakLinkMentionTextView(NSObjectFlag t) : base(t) => Initialize();
 
     protected internal SpeakLinkMentionTextView(NativeHandle handle) : base(handle)
     {
     }
 
-    public SpeakLinkMentionTextView(CGRect frame, NSTextContainer? textContainer) 
+    public SpeakLinkMentionTextView(CGRect frame, NSTextContainer? textContainer)
         : base(frame, textContainer) => Initialize();
 
     public SpeakLinkMentionTextView(CGRect frame) : base(frame) => Initialize();
 
     protected virtual void Initialize()
     {
-        
     }
 
     public bool IsMentionsEnabled { get; set; }
@@ -332,6 +332,21 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     protected virtual void OnSelectionChanged()
     {
-        
+        CursorSelectionChanged?.Invoke(this, ((int)SelectedRange.Location, 
+            (int)SelectedRange.Location + (int)SelectedRange.Length));
+    }
+
+    public void SetSelectionRange(int editorCursorPosition, int editorSelectionLength)
+    {
+        if (string.IsNullOrWhiteSpace(Text))
+            return;
+
+        if (editorCursorPosition + editorSelectionLength > Text?.Length)
+            editorSelectionLength = Text.Length - editorCursorPosition;
+
+        if (editorSelectionLength == 0)
+            SelectedRange = new NSRange(editorCursorPosition, 0);
+
+        SelectedRange = new NSRange(editorCursorPosition, editorCursorPosition + editorSelectionLength);
     }
 }

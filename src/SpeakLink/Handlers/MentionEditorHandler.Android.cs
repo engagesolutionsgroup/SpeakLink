@@ -97,7 +97,13 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         platformView.OnTextChanged += OnTextChanged;
         platformView.MentionSearched += MentionSearched;
         platformView.DisplaySuggestionChanged += DisplaySuggestionChanged;
+        platformView.CursorSelectionChanged += CursorSelectionChanged;
         platformView.SetupMentions();
+    }
+
+    private void CursorSelectionChanged(object? sender, (int selStart, int selEnd) e)
+    {
+        ElementController?.SendSelectionChanged(e.selStart, e.selEnd);
     }
 
     private void OnTextChanged(object? sender, TextChangedEventArgs e)
@@ -123,8 +129,10 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     protected override void DisconnectHandler(SpeakLinkMentionEditText platformView)
     {
+        platformView.OnTextChanged -= OnTextChanged;
         platformView.MentionSearched -= MentionSearched;
         platformView.DisplaySuggestionChanged -= DisplaySuggestionChanged;
+        platformView.CursorSelectionChanged -= CursorSelectionChanged;
         base.DisconnectHandler(platformView);
     }
 
@@ -179,7 +187,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         if (handler._ignoreFormattedTextChanges)
             return;
 
-        if(!string.IsNullOrWhiteSpace(handler.PlatformView?.Text))
+        if (!string.IsNullOrWhiteSpace(handler.PlatformView?.Text))
             handler.PlatformView.SetTextFormattedFromBinding(ConvertToSpannableText(handler, view));
     }
 
@@ -240,7 +248,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
             if (span is Mention.MentionSpan mentionSpan)
                 spannable.SetSpan(new LinkedIn.Spyglass.Mentions.MentionSpan(
-                        new MentionEntity { Id = mentionSpan.MentionId, Name = mentionSpan.Text},
+                        new MentionEntity { Id = mentionSpan.MentionId, Name = mentionSpan.Text },
                         handler.PlatformView.MentionSpanConfig),
                     start, end, SpanTypes.ExclusiveExclusive);
 
@@ -279,10 +287,10 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         var mentionTextColor = view.MentionTextColor?.ToPlatform().ToArgb() ??
                                handler.PlatformView.MentionSpanConfig.NormalTextColor;
-        
+
         var mentionSelectedTextColor = view.MentionSelectedTextColor?.ToPlatform().ToArgb() ??
                                        handler.PlatformView.MentionSpanConfig.SelectedTextColor;
-        
+
         var mentionSelectedBackgroundColor = view.MentionSelectedBackgroundColor?.ToPlatform().ToArgb() ??
                                              handler.PlatformView.MentionSpanConfig.SelectedTextBackgroundColor;
 
@@ -290,12 +298,12 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             || handler.PlatformView.MentionSpanConfig.SelectedTextColor != mentionSelectedTextColor
             || handler.PlatformView.MentionSpanConfig.SelectedTextBackgroundColor != mentionSelectedBackgroundColor)
         {
-            handler.PlatformView .MentionSpanConfig = new MentionSpanConfig.Builder()
+            handler.PlatformView.MentionSpanConfig = new MentionSpanConfig.Builder()
                 .SetMentionTextColor(mentionTextColor)
                 .SetSelectedMentionTextColor(mentionSelectedTextColor)
                 .SetSelectedMentionTextBackgroundColor(mentionSelectedBackgroundColor)
                 .Build();
-            
+
             //Force to update mentions colors
             handler.RaiseFormattedTextChanged();
             MapFormattedText(handler, view);
@@ -309,14 +317,14 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             return formattedString;
 
         int length = spannable.Length();
-        
+
         var nativeMentionSpans = spannable
             .GetSpans(0, length, Class.FromType(typeof(LinkedIn.Spyglass.Mentions.MentionSpan)))
             ?.OfType<LinkedIn.Spyglass.Mentions.MentionSpan>()
             .OrderBy(spannable.GetSpanStart)
             .Select(x => (mention: x, start: spannable.GetSpanStart(x), end: spannable.GetSpanEnd(x)))
             .ToArray() ?? [];
-        
+
         var spannedSegments = new List<(ISpanned spannedSegment, LinkedIn.Spyglass.Mentions.MentionSpan? mention)>();
 
         if (nativeMentionSpans.Length == 0)
@@ -338,9 +346,9 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
                 spannedSegments.Add(((ISpanned)spannable.SubSequenceFormatted(mentionSpanStart, mentionSpanEnd),
                     nativeMentionSpans[i].mention));
-                
+
                 startOrigin = mentionSpanEnd;
-                
+
                 if (nativeMentionSpans.Length - 1 == i && mentionSpanEnd < length)
                     spannedSegments.Add(((ISpanned)spannable.SubSequenceFormatted(mentionSpanEnd, length), null));
             }
@@ -412,7 +420,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                         break;
                 }
             }
-            
+
             yield return resultMauiSpan;
         }
     }
@@ -428,13 +436,13 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     private static void MapPlaceholderText(MentionEditorHandler handler, MentionEditor editor)
         => handler.PlatformView.Hint = editor.Placeholder;
-    
+
     internal static void MapIsFocused(MentionEditorHandler handler, MentionEditor editor)
     {
         SpeakLinkMentionEditText? platformView = handler.PlatformView;
         if (platformView == null)
-            return; 
-        if(editor.IsFocused)
+            return;
+        if (editor.IsFocused)
         {
             if (!IsSoftInputShowing(platformView))
                 ShowSoftInput(platformView);
@@ -447,7 +455,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         // We can't use the default implementation because it will interfere with selection view click
         //handler.RegisterForHideHideSoftInputOnTappedChangedManager(handler, editor);
     }
-    
+
     private void RegisterForHideHideSoftInputOnTappedChangedManager(MentionEditorHandler handler,
         MentionEditor mentionEditor)
     {
@@ -460,7 +468,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             method.Invoke(inputKeyboardManager, [mentionEditor]);
         }
     }
-    
+
     internal static bool IsSoftInputShowing(Android.Views.View view)
     {
         var insets = ViewCompat.GetRootWindowInsets(view);
@@ -475,7 +483,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     internal static bool HideSoftInput(Android.Views.View view)
     {
-        using var inputMethodManager = (InputMethodManager?)view.Context?.GetSystemService(Android.Content.Context.InputMethodService);
+        using var inputMethodManager =
+            (InputMethodManager?)view.Context?.GetSystemService(Android.Content.Context.InputMethodService);
         var windowToken = view.WindowToken;
 
         if (windowToken is not null && inputMethodManager is not null)
@@ -488,7 +497,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     internal static bool ShowSoftInput(TextView inputView)
     {
-        using var inputMethodManager = (InputMethodManager?)inputView.Context?.GetSystemService(Android.Content.Context.InputMethodService);
+        using var inputMethodManager =
+            (InputMethodManager?)inputView.Context?.GetSystemService(Android.Content.Context.InputMethodService);
 
         // The zero value for the second parameter comes from 
         // https://developer.android.com/reference/android/view/inputmethod/InputMethodManager#showSoftInput(android.view.View,%20int)
@@ -501,5 +511,17 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         if (handler?.PlatformView != null)
             handler.PlatformView.ImageInputCommand = editor.ImageInputCommand;
     }
-}
 
+    private static void MapSelectionLength(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler.PlatformView != null &&
+            (handler.PlatformView.SelectionStart - handler.PlatformView.SelectionEnd) != editor.SelectionLength)
+            handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
+    }
+
+    private static void MapCursorPosition(MentionEditorHandler handler, MentionEditor editor)
+    {
+        if (handler.PlatformView != null && handler.PlatformView.SelectionStart != editor.CursorPosition)
+            handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
+    }
+}
