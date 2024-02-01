@@ -59,6 +59,14 @@ public partial class MentionEditor : View, IEditorController
         TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
     }
 
+    public void SendSelectionChanged(int selStart, int selEnd)
+    {
+        if(CursorPosition != selStart)
+            CursorPosition = selStart;
+        if(SelectionLength != (selEnd - selStart))
+            SelectionLength = selEnd - selStart;
+    }
+
     protected virtual void ResizeIfNeeded()
     {
         if (AutoSize == EditorAutoSizeOption.TextChanges &&
@@ -115,5 +123,24 @@ public partial class MentionEditor : View, IEditorController
     {
         get => (string)GetValue(PlaceholderProperty);
         set => SetValue(PlaceholderProperty, value);
+    }
+
+
+    public static readonly BindableProperty CursorPositionProperty = BindableProperty.Create(
+        nameof(CursorPosition), typeof(int), typeof(MentionEditor), 0);
+
+    public int CursorPosition
+    {
+        get => (int)GetValue(CursorPositionProperty);
+        set => SetValue(CursorPositionProperty, value);
+    }
+
+    public static readonly BindableProperty SelectionLengthProperty = BindableProperty.Create(
+        nameof(SelectionLength), typeof(int), typeof(MentionEditor), 0);
+
+    public int SelectionLength
+    {
+        get => (int)GetValue(SelectionLengthProperty);
+        set => SetValue(SelectionLengthProperty, value);
     }
 }

@@ -27,6 +27,9 @@ public partial class MentionEditorHandler
             //Mentions Commands
             [nameof(MentionEditor.MentionSearchCommand)] = MapMentionSearchCommand,
             [nameof(MentionEditor.ImageInputCommandProperty)] = MapMentionCommand,
+            //Cursor
+            [nameof(MentionEditor.CursorPosition)] = MapCursorPosition,
+            [nameof(MentionEditor.SelectionLength)] = MapSelectionLength,
         };
 
     public static readonly CommandMapper<MentionEditor, MentionEditorHandler> CommandMapper =

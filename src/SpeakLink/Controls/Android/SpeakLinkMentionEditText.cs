@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Input;
 using Android.Content;
 using Android.Runtime;
 using Android.Util;
@@ -14,6 +15,7 @@ using TextChangedEventArgs = Microsoft.Maui.Controls.TextChangedEventArgs;
 namespace SpeakLink.Controls.Android;
 
 // All the code in this file is only included on Android.
+[SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
 public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, ISuggestionsVisibilityManager
 {
     private WordTokenizerConfig _wordTokenizer;
@@ -21,7 +23,8 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     private SpeakLinkMentionTextWatcher? _speakLinkMentionTextWatcher;
     private bool _textWatcherAdded = false;
     
-    internal new event  EventHandler<TextChangedEventArgs> OnTextChanged;
+    internal new event  EventHandler<TextChangedEventArgs>? OnTextChanged;
+    public event EventHandler<(int selStart, int selEnd)>? CursorSelectionChanged;
     public event EventHandler<bool> DisplaySuggestionChanged;
     private string _explicitChars = "@";
     private MentionSpanConfig _mentionSpanConfig;
@@ -171,5 +174,25 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
                 }
             );
         }
+    }
+
+    protected override void OnSelectionChanged(int selStart, int selEnd)
+    {
+        base.OnSelectionChanged(selStart, selEnd);
+        this.CursorSelectionChanged?.Invoke(this, (selStart, selEnd));
+    }
+
+    public void SetSelectionRange(int editorCursorPosition, int editorSelectionLength)
+    {
+        if (string.IsNullOrWhiteSpace(Text))
+            return;
+        
+        if(editorCursorPosition + editorSelectionLength > Text?.Length)
+            editorSelectionLength = Text.Length - editorCursorPosition;
+        
+        if(editorSelectionLength == 0)
+            SetSelection(editorCursorPosition);
+        
+        SetSelection(editorCursorPosition, editorCursorPosition + editorSelectionLength);
     }
 }
