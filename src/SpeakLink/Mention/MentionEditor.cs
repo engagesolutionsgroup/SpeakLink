@@ -10,7 +10,8 @@ public partial class MentionEditor : View, IEditorController
     
     internal string MentionInsertRequestCommand = nameof(MentionInsertRequestCommand);
     
-    public event EventHandler<TextChangedEventArgs>? TextChanged; 
+    public event EventHandler<TextChangedEventArgs>? TextChanged;
+    public event EventHandler<SelectionChangedEventArgs> SelectionChangedEventArgs; 
 
     /// <summary>Bindable property for <see cref="AutoSize"/>.</summary>
     public static readonly BindableProperty AutoSizeProperty = BindableProperty.Create(nameof(AutoSize),
@@ -59,12 +60,16 @@ public partial class MentionEditor : View, IEditorController
         TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
     }
 
-    public void SendSelectionChanged(int selStart, int selEnd)
+    void IMentionController.SendSelectionChanged(int selStart, int selEnd)
     {
         if(CursorPosition != selStart)
             CursorPosition = selStart;
-        if(SelectionLength != (selEnd - selStart))
-            SelectionLength = selEnd - selStart;
+        
+        var selectionLength = selEnd - selStart;
+        if (SelectionLength != selectionLength)
+            SelectionLength = selectionLength;
+        
+        SelectionChangedEventArgs?.Invoke(this, new(selStart, selectionLength));
     }
 
     protected virtual void ResizeIfNeeded()
