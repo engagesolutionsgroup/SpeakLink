@@ -100,14 +100,19 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     private void SendOnMentionSearch(MentionSearchEventArgs e)
     {
-        if (e.ControlCharacter != '\0'.ToString() && _chooserViewVisible == false)
+        if (e.ControlCharacter != '\0'.ToString() && _chooserViewVisible == false
+                                                  && !(e.MentionQuery?.Contains(Environment.NewLine) ?? false))
+        {
+            MentionSearched?.Invoke(this, e);
             SendOnDisplaySuggestionsChanged(true);
-
-        MentionSearched?.Invoke(this, e);
+        }
+        else 
+            SendOnDisplaySuggestionsChanged(false);
     }
 
     private void SendOnDisplaySuggestionsChanged(bool newState)
     {
+        // true values will be raised directly from CustomChooserViewDelegate
         _chooserViewVisible = newState;
         DisplaySuggestionChanged?.Invoke(this, newState);
     }

@@ -37,6 +37,7 @@ public partial class MentionEditorHandler
         {
             [nameof(MentionEditor.MentionInsertRequestCommand)] = MapMentionInsertRequested,
             [nameof(View.Focus)] = MapFocus,
+            [nameof(View.Unfocus)] = MapUnfocus,
         };
 
     static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view);
@@ -60,10 +61,5 @@ public partial class MentionEditorHandler
     public MentionEditorHandler(IPropertyMapper mapper, CommandMapper? commandMapper) : base(mapper, commandMapper)
     {
         
-    }
-
-    public new static void MapFocus(IViewHandler handler, IView mentionEditor, object? args)
-    {
-
     }
 }

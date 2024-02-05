@@ -26,7 +26,8 @@ public class MentionsHkwMentionsStateChangeDelegate : HKWMentionsStateChangeDele
         HKWMentionsPluginState oldState)
     {
         IsDisplaying = newState == HKWMentionsPluginState.CreatingMention;
-        SendOnDisplaySuggestionsChanged?.Invoke(newState == HKWMentionsPluginState.CreatingMention);
+        if(!IsDisplaying)
+            SendOnDisplaySuggestionsChanged?.Invoke(IsDisplaying);
     }
 
     public override void Selected(HKWMentionsEntityProtocol entity, NSIndexPath indexPath)
@@ -44,7 +45,7 @@ public class MentionsHkwMentionsStateChangeDelegate : HKWMentionsStateChangeDele
         MentionDeleted?.Invoke(plugin, entity);
     }
 
-    public override void  MentionsPluginWillActivateChooserView(HKWMentionsPlugin plugin)
+    public override void MentionsPluginWillActivateChooserView(HKWMentionsPlugin plugin)
     {
         SendOnDisplaySuggestionsChanged?.Invoke(true);
         IsDisplaying = true;
