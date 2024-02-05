@@ -366,4 +366,36 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         if (handler.PlatformView != null && handler.PlatformView.SelectedRange.Location != editor.CursorPosition)
             handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
     }
+    
+    public new static void MapFocus(IViewHandler handler, IView mentionEditor, object? args)
+    {
+        if (mentionEditor is not MentionEditor editor)
+            return;
+
+        if (args is FocusRequest focusRequest)
+        {
+            if (handler.PlatformView is UIResponder textView)
+            {
+                focusRequest.TrySetResult(textView.BecomeFirstResponder());
+            }
+
+            focusRequest.TrySetResult(false);
+        }
+    }
+    
+    public new static void MapUnFocus(IViewHandler handler, IView mentionEditor, object? args)
+    {
+        if (mentionEditor is not MentionEditor editor)
+            return;
+
+        if (args is FocusRequest focusRequest)
+        {
+            if (handler.PlatformView is UIResponder { IsFirstResponder: true} textView)
+            {
+                focusRequest.TrySetResult(textView.ResignFirstResponder());
+            }
+
+            focusRequest.TrySetResult(false);
+        }
+    }
 }
