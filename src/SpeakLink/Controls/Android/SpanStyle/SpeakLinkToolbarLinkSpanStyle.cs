@@ -1,12 +1,17 @@
 using System.ComponentModel;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
+using Android.Runtime;
 using Android.Text;
+using Java.Lang;
+using LinkedIn.Spyglass.Mentions;
 using SpeakLink.Controls.Android.Spans;
 using SpeakLink.Controls.Android.Toolbar;
 using SpeakLink.Link;
 using SpeakLink.RichText;
+using Math = System.Math;
 
 namespace SpeakLink.Controls.Android.SpanStyle;
 
@@ -77,9 +82,20 @@ public partial class SpeakLinkToolbarLinkSpanStyle : IAndroidToolbarSpanStyle
             if (start == end)
                 editable.Insert(start, text);
             else
+            {
+                if (editable is MentionsEditable { MentionSpans.Count: > 0 } mentionsEditable)
+                {
+                    for (int i = start; i < end; i++)
+                    {
+                        if(mentionsEditable.GetMentionSpanAtOffset(i) is { } mentionSpan)
+                            mentionsEditable.RemoveSpan(mentionSpan);
+                    }
+                }
                 editable.Replace(start, end, text);
+            }
 
             editable.SetSpan(new SpeakLinkLinkSpan(url), start, start + text.Length, SpanTypes.ExclusiveExclusive);
+            ParentEditText.TextFormatted = editable;
         }
     }
 

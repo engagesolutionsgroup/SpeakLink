@@ -1,4 +1,6 @@
 using System.Globalization;
+using SpeakLink.Link;
+using SpeakLink.Mention;
 
 namespace SpeakLink.Sample;
 
@@ -10,10 +12,19 @@ public class FormattedStringDescriptionConverter : IValueConverter
         var description = string.Empty;
         foreach (var span in formattedString?.Spans ?? [])
         {
-            var spanDescription = $"T: {span.GetType()}" +
-                                  $"Text {span.Text}" +
-                                  $"Foreground: {span.TextColor}";
-            description += spanDescription;
+            var spanDescription = $"🌀{span.GetType().Name}" +
+                                  $"✍️{span.Text}";
+            switch (span)
+            {
+                case LinkSpan linkSpan:
+                    spanDescription += $" 🔗{linkSpan.Text}";
+                    break;
+                case MentionSpan mentionSpan:
+                    spanDescription += $" 💬{mentionSpan.MentionId}";
+                    break;
+            }
+
+            description += spanDescription + Environment.NewLine;
         }
 
         return description;

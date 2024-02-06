@@ -6,6 +6,7 @@ using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using UIKit;
 using SpeakLink.Controls.MaciOS;
+using SpeakLink.Link;
 using SpeakLink.Mention;
 using TextChangedEventArgs = Microsoft.Maui.Controls.TextChangedEventArgs;
 
@@ -218,6 +219,12 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                 var mentionAttribute =
                     (HKWMentionsAttribute)attributes[SpeakLinkMentionTextView.HkwMentionAttributeNameString];
                 span = new MentionSpan(mentionAttribute.EntityIdentifier, mentionAttribute.MentionText);
+            }
+            else if (attributes?.ContainsKey(UIStringAttributeKey.Link) ?? false)
+            {
+                // Extract link attributes
+                var url = attributes[UIStringAttributeKey.Link];
+                span = new LinkSpan(url.ToString(), text);
             }
             else
             {

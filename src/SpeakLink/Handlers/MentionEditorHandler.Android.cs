@@ -11,7 +11,10 @@ using LinkedIn.Spyglass.Mentions;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using SpeakLink.Controls.Android;
+using SpeakLink.Controls.Android.Spans;
+using SpeakLink.Link;
 using SpeakLink.Mention;
+using MentionSpan = LinkedIn.Spyglass.Mentions.MentionSpan;
 using Rect = Microsoft.Maui.Graphics.Rect;
 using TextChangedEventArgs = Microsoft.Maui.Controls.TextChangedEventArgs;
 using View = Microsoft.Maui.Controls.View;
@@ -247,7 +250,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             c = end;
 
             if (span is Mention.MentionSpan mentionSpan)
-                spannable.SetSpan(new LinkedIn.Spyglass.Mentions.MentionSpan(
+                spannable.SetSpan(new MentionSpan(
                         new MentionEntity { Id = mentionSpan.MentionId, Name = mentionSpan.Text },
                         handler.PlatformView.MentionSpanConfig),
                     start, end, SpanTypes.ExclusiveExclusive);
@@ -318,15 +321,52 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
         int length = spannable.Length();
 
+        List<(ISpanned spannedSegment, MentionSpan? mention)> spannedSegments = ExtractSeparateSpanSegments<MentionSpan>(spannable, length);
+        
+
+        foreach (var (spannedSegment,mention) in spannedSegments)
+        {
+            if (mention != null)
+            {
+                formattedString.Spans.Add(ToMauiMentionSpan(mention));
+            }
+            else
+            {
+                List<(ISpanned innerSpannedSegment, SpeakLinkLinkSpan? link)> innerSpannedSegments = 
+                    ExtractSeparateSpanSegments<SpeakLinkLinkSpan>(spannedSegment, spannedSegment.Length());
+                foreach (var (innerSpannedSegment,link) in innerSpannedSegments)
+                {
+                    if (link != null)
+                    {
+                        var linkText = innerSpannedSegment.SubSequence(innerSpannedSegment.GetSpanStart(link), innerSpannedSegment.GetSpanEnd(link));
+                        formattedString.Spans.Add(ToMauiLinkSpan(link, linkText));
+                    }
+                    else
+                    {
+                        foreach(var mauiSpan in GetMauiSpansFromSpannable(innerSpannedSegment))
+                            formattedString.Spans.Add(mauiSpan);
+                    }
+                }
+                
+            }
+        }
+        return formattedString;
+    }
+
+    private LinkSpan ToMauiLinkSpan(SpeakLinkLinkSpan link, string linkText) => new(link.URL, linkText);
+
+    private static List<(ISpanned spannedSegment, T? span)> ExtractSeparateSpanSegments<T>(ISpanned spannable, int length)
+        where T : CharacterStyle
+    {
+        var spannedSegments = new List<(ISpanned spannedSegment, T? mention)>();
+        
         var nativeMentionSpans = spannable
-            .GetSpans(0, length, Class.FromType(typeof(LinkedIn.Spyglass.Mentions.MentionSpan)))
-            ?.OfType<LinkedIn.Spyglass.Mentions.MentionSpan>()
+            .GetSpans(0, length, Class.FromType(typeof(T)))
+            ?.OfType<T>()
             .OrderBy(spannable.GetSpanStart)
             .Select(x => (mention: x, start: spannable.GetSpanStart(x), end: spannable.GetSpanEnd(x)))
             .ToArray() ?? [];
-
-        var spannedSegments = new List<(ISpanned spannedSegment, LinkedIn.Spyglass.Mentions.MentionSpan? mention)>();
-
+        
         if (nativeMentionSpans.Length == 0)
         {
             spannedSegments.Add((spannable, null));
@@ -354,25 +394,11 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             }
         }
 
-        foreach (var spannedSegment in spannedSegments)
-        {
-            foreach (var resultSpan in ConvertFromSpannableSegment(spannedSegment.spannedSegment,
-                         spannedSegment.mention))
-                formattedString.Spans.Add(resultSpan);
-        }
-
-        return formattedString;
+        return spannedSegments;
     }
 
-    protected virtual IEnumerable<Span> ConvertFromSpannableSegment(ISpanned spannedSegment,
-        LinkedIn.Spyglass.Mentions.MentionSpan? mentionSpan)
+    protected virtual IEnumerable<Span> GetMauiSpansFromSpannable(ISpanned spannedSegment)
     {
-        if (mentionSpan != null)
-        {
-            yield return ToMauiMentionSpan(mentionSpan);
-            yield break;
-        }
-
         int nextSpanTransition;
         for (int i = 0; i < spannedSegment.Length(); i = nextSpanTransition)
         {
@@ -428,7 +454,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     protected virtual FormattedString GetFormattedText() =>
         ConvertFromSpannableText(PlatformView?.TextFormatted as ISpanned);
 
-    private Mention.MentionSpan ToMauiMentionSpan(LinkedIn.Spyglass.Mentions.MentionSpan mentionSpan)
+    private Mention.MentionSpan ToMauiMentionSpan(MentionSpan mentionSpan)
         => new(mentionSpan.Mention.SuggestibleId.ToString(), mentionSpan.DisplayString)
         {
             TextColor = new Android.Graphics.Color(PlatformView.MentionSpanConfig.NormalTextColor).ToColor()
@@ -515,7 +541,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     private static void MapSelectionLength(MentionEditorHandler handler, MentionEditor editor)
     {
         if (handler.PlatformView != null &&
-            (handler.PlatformView.SelectionStart - handler.PlatformView.SelectionEnd) != editor.SelectionLength)
+            System.Math.Abs(handler.PlatformView.SelectionEnd - handler.PlatformView.SelectionStart) != editor.SelectionLength)
             handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
     }
 
