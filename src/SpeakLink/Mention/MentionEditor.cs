@@ -58,6 +58,7 @@ public partial class MentionEditor : View, IEditorController
     {
         ResizeIfNeeded();
         TextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
+        Text = newValue;
     }
 
     void IMentionController.SendSelectionChanged(int selStart, int selEnd)

@@ -19,6 +19,9 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     static partial void MapText(MentionEditorHandler handler, MentionEditor view)
     {
+        if (handler._ignoreFormattedTextChanges)
+            return;
+        
         handler.PlatformView?.SetText(view.Text);
     }
 

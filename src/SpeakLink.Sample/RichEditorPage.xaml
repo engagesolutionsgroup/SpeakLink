@@ -23,6 +23,14 @@
                 <VerticalStackLayout HorizontalOptions="Start"
                                      VerticalOptions="Start"
                                      Spacing="20">
+                    <Label Text="Text" FontSize="12" FontAttributes="Bold" />
+                    <Label
+                        FormattedText="{x:Binding Source={x:Reference RichEditor}, Path=Text}"
+                        FontFamily="OpenSansRegular"
+                        FontSize="9"
+                        TextColor="Black"
+                        HorizontalTextAlignment="Start"
+                        VerticalTextAlignment="Start" />
                     <Label Text="MAUI Formatted Text" FontSize="12" FontAttributes="Bold" />
                     <Label
                         FormattedText="{x:Binding FormattedString}"

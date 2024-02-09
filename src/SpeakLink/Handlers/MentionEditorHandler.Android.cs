@@ -27,6 +27,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     static partial void MapText(MentionEditorHandler handler, MentionEditor view)
     {
+        if (handler._ignoreFormattedTextChanges)
+            return;
         handler.PlatformView?.SetText(view.Text);
     }
 
@@ -118,6 +120,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         _ignoreFormattedTextChanges = true;
         ElementController?.SendFormattedTextChanged(GetFormattedText());
+        ElementController?.OnTextChanged(null, this.PlatformView.Text);
         _ignoreFormattedTextChanges = false;
     }
 
