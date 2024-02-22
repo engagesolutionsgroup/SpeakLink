@@ -75,9 +75,7 @@ public partial class MentionEditor : View, IEditorController
 
     protected virtual void ResizeIfNeeded()
     {
-        if (AutoSize == EditorAutoSizeOption.TextChanges &&
-            MeasureOverride(_previousWidthConstraint, _previousHeightConstraint)
-            == new Size(_previousBounds.Width, _previousBounds.Height))
+        if (AutoSize == EditorAutoSizeOption.TextChanges)
             InvalidateMeasure();
     }
 

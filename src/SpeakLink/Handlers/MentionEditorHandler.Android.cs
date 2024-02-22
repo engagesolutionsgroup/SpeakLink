@@ -426,26 +426,25 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                         resultMauiSpan.BackgroundColor =
                             new Android.Graphics.Color(backgroundColorSpan.BackgroundColor).ToColor();
                         break;
-                    case StrikethroughSpan:
+                    case SpeakLinkStrikethroughSpan:
                         resultMauiSpan.TextDecorations |= TextDecorations.Strikethrough;
                         break;
-                    case UnderlineSpan:
+                    case SpeakLinkUnderlineSpan:
                         resultMauiSpan.TextDecorations |= TextDecorations.Underline;
                         break;
                     case StyleSpan styleSpan:
-                        switch (styleSpan.Style)
+                        switch (styleSpan)
                         {
-                            case TypefaceStyle.Bold:
+                            case SpeakLinkBoldSpan:
                                 resultMauiSpan.FontAttributes |= FontAttributes.Bold;
                                 break;
-                            case TypefaceStyle.Italic:
+                            case SpeakLinkItalicSpan:
                                 resultMauiSpan.FontAttributes |= FontAttributes.Italic;
                                 break;
-                            case TypefaceStyle.BoldItalic:
+                            case { Style:TypefaceStyle.BoldItalic} :
                                 resultMauiSpan.FontAttributes |= FontAttributes.Bold | FontAttributes.Italic;
                                 break;
                         }
-
                         break;
                 }
             }
