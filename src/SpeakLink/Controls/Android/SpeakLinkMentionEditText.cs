@@ -67,8 +67,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     }
 
     public event EventHandler<MentionSearchEventArgs> MentionSearched;
-
-    public bool IsMentionsEnabled { get; set; }
+    
 
     public virtual void UpdateTokenizer(string explicitChars)
     {

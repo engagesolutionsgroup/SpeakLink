@@ -304,7 +304,7 @@ public class SpeakLinkMentionTextView : HKWTextView
     {
         var baseResult = base.ResignFirstResponder();
         if (baseResult)
-            FirstResponderStateChanged?.Invoke(this, true);
+            FirstResponderStateChanged?.Invoke(this, false);
         return baseResult;
     }
 
