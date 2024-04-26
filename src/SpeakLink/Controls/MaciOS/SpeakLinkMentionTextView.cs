@@ -100,8 +100,7 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     private void SendOnMentionSearch(MentionSearchEventArgs e)
     {
-        if (e.ControlCharacter != '\0'.ToString() && _chooserViewVisible == false
-                                                  && !(e.MentionQuery?.Contains(Environment.NewLine) ?? false))
+        if (e.ControlCharacter != '\0'.ToString() && !(e.MentionQuery?.Contains(Environment.NewLine) ?? false))
         {
             MentionSearched?.Invoke(this, e);
             SendOnDisplaySuggestionsChanged(true);

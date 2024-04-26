@@ -87,6 +87,7 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
                 .Builder()
             .SetExplicitChars(explicitChars)
             .SetMaxNumKeywords(maxNumKeywords)
+            .SetWordBreakChars(".," + Environment.NewLine)
             .SetThreshold(threshold)
             .Build();
         

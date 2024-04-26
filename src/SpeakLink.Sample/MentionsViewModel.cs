@@ -40,6 +40,8 @@ public class MentionsViewModel : INotifyPropertyChanged
     private void OnMentionSearch(MentionSearchEventArgs mentionSearchEventArgs)
     {
         MentionUsers = MentionService.SearchForUsers(mentionSearchEventArgs.MentionQuery);
+        if (MentionUsers.Count == 0)
+            IsDisplayingMentions = false;
     }
 
     public Command<MentionSearchEventArgs> MentionSearchCommand { get; set; }
