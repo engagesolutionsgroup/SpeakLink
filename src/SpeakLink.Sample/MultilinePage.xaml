@@ -3,8 +3,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sample="clr-namespace:SpeakLink.Sample"
-             xmlns:mention="clr-namespace:SpeakLink.Mention;assembly=SpeakLink"
-             xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             xmlns:richText="clr-namespace:SpeakLink.RichText;assembly=SpeakLink"
              x:Class="SpeakLink.Sample.MultilinePage"
              x:DataType="sample:MentionsViewModel">
 
@@ -25,7 +24,7 @@
                 <VerticalStackLayout HorizontalOptions="Start"
                                      VerticalOptions="Start"
                                      Spacing="20">
-                    <mention:MentionEditor
+                    <richText:RichEditor
                         x:Name="MentionEditor"
                         FontSize="18"
                         IsVisible="True"

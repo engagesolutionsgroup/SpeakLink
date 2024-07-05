@@ -12,9 +12,7 @@ using LinkedIn.Spyglass.Mentions;
 using LinkedIn.Spyglass.Suggestions;
 using LinkedIn.Spyglass.Tokenization;
 using LinkedIn.Spyglass.Ui;
-using SpeakLink.Controls.Android.Spans;
 using SpeakLink.Mention;
-using MentionSpan = LinkedIn.Spyglass.Mentions.MentionSpan;
 using TextChangedEventArgs = Microsoft.Maui.Controls.TextChangedEventArgs;
 
 namespace SpeakLink.Controls.Android;
@@ -34,7 +32,8 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     private MentionSpanConfig _mentionSpanConfig;
     private bool _ignoreTextChangeNotification;
     private ICommand? _imageInputCommand;
-    private SpeakLinkMentionSpanFactory _mentionSpanFactory;
+    protected SpeakLinkMentionSpanFactory? _mentionSpanFactory;
+    protected Typeface? _editorMentionFontFamily;
 
 
     protected SpeakLinkMentionEditText(IntPtr javaReference, JniHandleOwnership transfer)
@@ -62,7 +61,10 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     {
         _speakLinkMentionTextWatcher = new SpeakLinkMentionTextWatcher(InvokeOnTextChanged);
         SetMentionSpanConfig(new MentionSpanConfig.Builder().Build());
-        _mentionSpanFactory = new SpeakLinkMentionSpanFactory();
+        _mentionSpanFactory = new SpeakLinkMentionSpanFactory
+        {
+            MentionTypeface = _editorMentionFontFamily
+        };
     }
 
     protected void InvokeOnTextChanged(string? oldValue, string? newValue)
@@ -200,13 +202,10 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         SetSelection(editorCursorPosition, editorCursorPosition + editorSelectionLength);
     }
 
-    public void SetMentionFontFamily(Typeface? editorMentionFontFamily) 
-        => _mentionSpanFactory.MentionTypeface = editorMentionFontFamily;
-}
-
-public class SpeakLinkMentionSpanFactory : MentionsEditText.MentionSpanFactory
-{
-    public Typeface? MentionTypeface { get; set; }
-    public override MentionSpan CreateMentionSpan(IMentionable mention, MentionSpanConfig? config)
-        => (config != null) ? new SpeakLinkMentionSpan(mention, config, MentionTypeface)  : new MentionSpan(mention);
+    public void SetMentionFontFamily(Typeface? editorMentionFontFamily)
+    {
+        if (_mentionSpanFactory != null)
+            _mentionSpanFactory.MentionTypeface = editorMentionFontFamily;
+        _editorMentionFontFamily = editorMentionFontFamily;
+    }
 }

@@ -9,7 +9,7 @@ namespace SpeakLink.Controls.Android.Spans;
 public class SpeakLinkMentionSpan : MentionSpan
 {
     private Typeface? _typeface;
-    
+
     protected SpeakLinkMentionSpan(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
     {
     }
@@ -18,22 +18,24 @@ public class SpeakLinkMentionSpan : MentionSpan
     {
     }
 
-    public SpeakLinkMentionSpan(IMentionable mentionable) : base(mentionable) 
-    { 
-    }
-    public SpeakLinkMentionSpan(IMentionable mentionable, MentionSpanConfig mentionSpanConfig) : base(mentionable, mentionSpanConfig) 
-    { 
+    public SpeakLinkMentionSpan(IMentionable mentionable) : base(mentionable)
+    {
     }
 
-    public SpeakLinkMentionSpan(IMentionable mentionable, MentionSpanConfig mentionSpanConfig, Typeface? typeface) : base(mentionable, mentionSpanConfig) 
-    { 
+    public SpeakLinkMentionSpan(IMentionable mentionable, MentionSpanConfig mentionSpanConfig) : base(mentionable,
+        mentionSpanConfig)
+    {
+    }
+
+    public SpeakLinkMentionSpan(IMentionable mentionable, MentionSpanConfig mentionSpanConfig, Typeface? typeface) :
+        base(mentionable, mentionSpanConfig)
+    {
         _typeface = typeface;
     }
 
     public override void UpdateDrawState(TextPaint ds)
     {
-        
-        if(_typeface != null)
+        if (_typeface != null)
         {
             ds.SetTypeface(_typeface);
         }

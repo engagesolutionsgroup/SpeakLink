@@ -36,10 +36,12 @@ public class SpeakLinkRichEditText : SpeakLinkMentionEditText
 
     protected override void Initialize()
     {
-        SetMentionSpanConfig(new MentionSpanConfig.Builder().Build());
+        base.Initialize();
+        
         ToolbarState = new(this);
         _richTextWatcher = new SpeakLinkRichTextWatcher(ToolbarState, InvokeOnTextChanged);
-        this.AddTextChangedListener(_richTextWatcher);
+        AddTextChangedListener(_richTextWatcher);
+        AddMentionWatcher(_richTextWatcher);
     }
 
     protected override void OnSelectionChanged(int selStart, int selEnd)

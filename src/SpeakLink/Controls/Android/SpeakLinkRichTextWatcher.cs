@@ -1,11 +1,13 @@
 using Android.Runtime;
 using Android.Text;
 using Java.Lang;
+using LinkedIn.Spyglass.Mentions;
+using LinkedIn.Spyglass.Ui;
 using SpeakLink.Controls.Android.Toolbar;
 
 namespace SpeakLink.Controls.Android;
 
-public class SpeakLinkRichTextWatcher : Java.Lang.Object, ITextWatcher
+public class SpeakLinkRichTextWatcher : Java.Lang.Object, ITextWatcher, MentionsEditText.IMentionWatcher
 {
     private readonly Action<string?, string?>? _textChangedCallback;
     private bool _ignoreNextTextChange = false;
@@ -75,4 +77,16 @@ public class SpeakLinkRichTextWatcher : Java.Lang.Object, ITextWatcher
 
     private static void Log(string message) 
         => global::Android.Util.Log.Debug(nameof(SpeakLinkRichTextWatcher), message);
+
+    public void OnMentionAdded(IMentionable mentionable, string text, int start, int end)
+    {
+    }
+
+    public void OnMentionDeleted(IMentionable mentionable, string text, int start, int end)
+    {
+    }
+
+    public void OnMentionPartiallyDeleted(IMentionable mentionable, string text, int start, int end)
+    {
+    }
 }
