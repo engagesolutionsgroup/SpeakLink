@@ -9,7 +9,7 @@ namespace SpeakLink.Controls.Android.Spans;
 public class SpeakLinkBoldSpan : StyleSpan
 {
     private const TypefaceStyle TypefaceStyle = global::Android.Graphics.TypefaceStyle.Bold;
-    
+
     protected SpeakLinkBoldSpan(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
     {
     }
@@ -21,9 +21,9 @@ public class SpeakLinkBoldSpan : StyleSpan
     public SpeakLinkBoldSpan() : base(TypefaceStyle)
     {
     }
-    
+
     [SupportedOSPlatform("android33.0")]
-    public SpeakLinkBoldSpan(int fontWeightAdjustment) 
+    public SpeakLinkBoldSpan(int fontWeightAdjustment)
         : base(TypefaceStyle, fontWeightAdjustment)
     {
     }

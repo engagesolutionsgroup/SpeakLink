@@ -36,6 +36,16 @@ public partial class MentionEditor : ITextStyle, IFontElement
             propertyChanged: OnFontSizeChanged,
             defaultValueCreator: FontSizeDefaultValueCreator);
 
+    public static readonly BindableProperty MentionFontFamilyProperty = BindableProperty.Create(
+        nameof(MentionFontFamily), typeof(string), typeof(MentionEditor), default, 
+        propertyChanged:OnMentionFontFamilyChanged);
+
+    public string MentionFontFamily
+    {
+        get { return (string)GetValue(MentionFontFamilyProperty); }
+        set { SetValue(MentionFontFamilyProperty, value); }
+    }
+
 
     /// <summary>
     /// The backing store for the <see cref="IFontElement.FontAutoScalingEnabled" /> bindable property.
@@ -113,6 +123,15 @@ public partial class MentionEditor : ITextStyle, IFontElement
             return Font.OfSize(FontFamily, size, enableScaling: FontAutoScalingEnabled);
         }
     }
+    
+    public Font? MentionFont
+    {
+        get
+        {
+            var size = FontSize;
+            return Font.OfSize(MentionFontFamily, size, enableScaling:FontAutoScalingEnabled);
+        }
+    }
 
     protected void HandleFontChanged()
     {
@@ -120,11 +139,18 @@ public partial class MentionEditor : ITextStyle, IFontElement
         InvalidateMeasureNonVirtual(InvalidationTrigger.MeasureChanged);
     }
 
-    
-
     private static void OnFontFamilyChanged(BindableObject bindable, object oldValue, object newValue)
     {
         ((IFontElement)bindable).OnFontFamilyChanged((string)oldValue, (string)newValue);
+    }
+    
+    private static void OnMentionFontFamilyChanged(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is not VisualElement visualElement) 
+            return;
+        
+        visualElement.Handler?.UpdateValue(nameof(MentionFont));
+        visualElement.InvalidateMeasureNonVirtual(InvalidationTrigger.MeasureChanged);
     }
 
     private static void OnFontSizeChanged(BindableObject bindable, object oldValue, object newValue)

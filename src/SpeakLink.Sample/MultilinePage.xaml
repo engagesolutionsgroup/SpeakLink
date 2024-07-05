@@ -41,6 +41,7 @@
                         Placeholder="To mention someone type @"
                         MentionSelectedBackgroundColor="Blue"
                         MentionSelectedTextColor="White"
+                        MentionFontFamily="Atop"
                         AutoSize="TextChanges"
                         FormattedText="{x:Binding FormattedString}"
                         AutomationId="Mention" />

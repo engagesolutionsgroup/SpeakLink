@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 using Android.Content;
+using Android.Graphics;
 using Android.Runtime;
+using Android.Text;
+using Android.Text.Style;
 using Android.Util;
 using AndroidX.Core.View;
 using Java.Lang;
@@ -9,7 +12,9 @@ using LinkedIn.Spyglass.Mentions;
 using LinkedIn.Spyglass.Suggestions;
 using LinkedIn.Spyglass.Tokenization;
 using LinkedIn.Spyglass.Ui;
+using SpeakLink.Controls.Android.Spans;
 using SpeakLink.Mention;
+using MentionSpan = LinkedIn.Spyglass.Mentions.MentionSpan;
 using TextChangedEventArgs = Microsoft.Maui.Controls.TextChangedEventArgs;
 
 namespace SpeakLink.Controls.Android;
@@ -18,22 +23,22 @@ namespace SpeakLink.Controls.Android;
 [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
 public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, ISuggestionsVisibilityManager
 {
-    private WordTokenizerConfig _wordTokenizerConfig;
     private readonly List<string> _bucket = new();
     private SpeakLinkMentionTextWatcher? _speakLinkMentionTextWatcher;
     private bool _textWatcherAdded = false;
-    
-    internal new event  EventHandler<TextChangedEventArgs>? OnTextChanged;
+
+    internal new event EventHandler<TextChangedEventArgs>? OnTextChanged;
     public event EventHandler<(int selStart, int selEnd)>? CursorSelectionChanged;
     public event EventHandler<bool> DisplaySuggestionChanged;
     private string _explicitChars = "@";
     private MentionSpanConfig _mentionSpanConfig;
     private bool _ignoreTextChangeNotification;
     private ICommand? _imageInputCommand;
+    private SpeakLinkMentionSpanFactory _mentionSpanFactory;
 
 
     protected SpeakLinkMentionEditText(IntPtr javaReference, JniHandleOwnership transfer)
-        : base(javaReference, transfer) 
+        : base(javaReference, transfer)
         => Initialize();
 
     public SpeakLinkMentionEditText(Context context) : base(context)
@@ -42,7 +47,8 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     public SpeakLinkMentionEditText(Context context, IAttributeSet? attrs) : base(context, attrs)
         => Initialize();
 
-    public SpeakLinkMentionEditText(Context context, IAttributeSet? attrs, int defStyle) : base(context, attrs, defStyle)
+    public SpeakLinkMentionEditText(Context context, IAttributeSet? attrs, int defStyle) : base(context, attrs,
+        defStyle)
         => Initialize();
 
     public void SetText(string text)
@@ -51,11 +57,12 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         Text = text;
         _ignoreTextChangeNotification = false;
     }
-    
+
     protected virtual void Initialize()
     {
         _speakLinkMentionTextWatcher = new SpeakLinkMentionTextWatcher(InvokeOnTextChanged);
         SetMentionSpanConfig(new MentionSpanConfig.Builder().Build());
+        _mentionSpanFactory = new SpeakLinkMentionSpanFactory();
     }
 
     protected void InvokeOnTextChanged(string? oldValue, string? newValue)
@@ -65,15 +72,14 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         
         OnTextChanged?.Invoke(this, new TextChangedEventArgs(oldValue, newValue));
     }
-
-    public event EventHandler<MentionSearchEventArgs> MentionSearched;
     
+    public event EventHandler<MentionSearchEventArgs> MentionSearched;
 
     public virtual void UpdateTokenizer(string explicitChars)
     {
-        if(_explicitChars == explicitChars)
+        if (_explicitChars == explicitChars)
             return;
-        
+
         _explicitChars = explicitChars;
         SetupMentions(explicitChars);
     }
@@ -81,16 +87,20 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     public void SetupMentions(string explicitChars = "@", WordTokenizerConfig? wordTokenizerConfig = null)
     {
         _explicitChars = explicitChars;
-        _wordTokenizerConfig = wordTokenizerConfig ?? new WordTokenizerConfig.Builder()
+        wordTokenizerConfig ??= new WordTokenizerConfig.Builder()
             .SetMaxNumKeywords(2).Build();
-        
-        Tokenizer = new WordTokenizer();
+
+        Tokenizer = new WordTokenizer(wordTokenizerConfig);
 
         SetQueryTokenReceiver(this);
         SetSuggestionsVisibilityManager(this);
 
         if (!_textWatcherAdded)
+        {
             AddTextChangedListener(_speakLinkMentionTextWatcher);
+            AddMentionWatcher(_speakLinkMentionTextWatcher!);
+            SetMentionSpanFactory(_mentionSpanFactory);
+        }
     }
 
     public IList<string> OnQueryReceived(QueryToken queryToken)
@@ -150,11 +160,12 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     {
         if (!OperatingSystem.IsAndroidVersionAtLeast(21))
             return;
-        
+
         if (_imageInputCommand != null && value == null)
         {
             ViewCompat.SetOnReceiveContentListener(this, MediaContentReceiver.ImageMimeTypes, null);
         }
+
         if (value != null)
         {
             _imageInputCommand = value;
@@ -172,20 +183,30 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
     protected override void OnSelectionChanged(int selStart, int selEnd)
     {
         base.OnSelectionChanged(selStart, selEnd);
-        this.CursorSelectionChanged?.Invoke(this, (selStart, selEnd));
+        CursorSelectionChanged?.Invoke(this, (selStart, selEnd));
     }
 
     public void SetSelectionRange(int editorCursorPosition, int editorSelectionLength)
     {
         if (string.IsNullOrWhiteSpace(Text))
             return;
-        
-        if(editorCursorPosition + editorSelectionLength > Text?.Length)
+
+        if (editorCursorPosition + editorSelectionLength > Text?.Length)
             editorSelectionLength = Text.Length - editorCursorPosition;
-        
-        if(editorSelectionLength == 0)
+
+        if (editorSelectionLength == 0)
             SetSelection(editorCursorPosition);
-        
+
         SetSelection(editorCursorPosition, editorCursorPosition + editorSelectionLength);
     }
+
+    public void SetMentionFontFamily(Typeface? editorMentionFontFamily) 
+        => _mentionSpanFactory.MentionTypeface = editorMentionFontFamily;
+}
+
+public class SpeakLinkMentionSpanFactory : MentionsEditText.MentionSpanFactory
+{
+    public Typeface? MentionTypeface { get; set; }
+    public override MentionSpan CreateMentionSpan(IMentionable mention, MentionSpanConfig? config)
+        => (config != null) ? new SpeakLinkMentionSpan(mention, config, MentionTypeface)  : new MentionSpan(mention);
 }

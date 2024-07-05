@@ -17,15 +17,15 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 {
     private bool _ignoreFormattedTextChanges;
 
-    static partial void MapText(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapText(MentionEditorHandler handler, MentionEditor view)
     {
         if (handler._ignoreFormattedTextChanges)
             return;
-        
+
         handler.PlatformView?.SetText(view.Text);
     }
 
-    static partial void MapFont(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapFont(MentionEditorHandler handler, MentionEditor view)
     {
         var nativeFont =
             view.Font.ToUIFont(handler.MauiContext!.Services.GetRequiredService<IFontManager>());
@@ -50,7 +50,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         handler.PlatformView.InvalidateIntrinsicContentSize();
     }
 
-    static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view)
     {
         handler.PlatformView.TextColor = view.TextColor?.ToPlatform() ?? GetDefaultLabelColor();
     }
@@ -60,7 +60,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         handler.PlatformView.Editable = view.IsEnabled;
     }
 
-    static partial void MapIsMentionsEnabled(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapIsMentionsEnabled(MentionEditorHandler handler, MentionEditor view)
     {
         handler.PlatformView.IsMentionsEnabled = view.IsMentionsEnabled;
     }
@@ -121,7 +121,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             view.IsFocused = e;
     }
 
-    static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view)
     {
         handler.PlatformView.SuggestionPopupVisible = view.IsSuggestionsPopupVisible;
     }
@@ -147,13 +147,13 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         handler.PlatformView.ExplicitCharacters = editor.ExplicitCharacters;
     }
 
-    static partial void MapMentionInsertRequested(MentionEditorHandler handler, MentionEditor view, object? arg)
+    public static partial void MapMentionInsertRequested(MentionEditorHandler handler, MentionEditor view, object? arg)
     {
         if (arg is IHKWMentionsEntityProtocol mentionsEntityProtocol)
             handler.PlatformView.MentionSelected(mentionsEntityProtocol);
     }
 
-    static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view)
     {
         if (handler._ignoreFormattedTextChanges)
             return;
@@ -376,7 +376,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         if (handler.PlatformView != null && handler.PlatformView.SelectedRange.Location != editor.CursorPosition)
             handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
     }
-    
+
     public new static void MapFocus(IViewHandler handler, IView mentionEditor, object? args)
     {
         if (mentionEditor is not MentionEditor editor)
@@ -392,7 +392,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             focusRequest.TrySetResult(false);
         }
     }
-    
+
     public new static void MapUnFocus(IViewHandler handler, IView mentionEditor, object? args)
     {
         if (mentionEditor is not MentionEditor editor)
@@ -400,12 +400,27 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
         if (args is FocusRequest focusRequest)
         {
-            if (handler.PlatformView is UIResponder { IsFirstResponder: true} textView)
+            if (handler.PlatformView is UIResponder { IsFirstResponder: true } textView)
             {
                 focusRequest.TrySetResult(textView.ResignFirstResponder());
             }
 
             focusRequest.TrySetResult(false);
+        }
+    }
+    
+    public static partial void MapMentionFontFamily(MentionEditorHandler handler, MentionEditor editor)
+    {
+        var fontManager = handler.MauiContext?.Services?.GetService<IFontManager>();
+        if (fontManager != null)
+        {
+            if (editor.MentionFont == null)
+                handler.PlatformView.SetMentionFontFamily(null);
+            else
+            {
+                var font = fontManager.GetFont(editor.MentionFont.Value);
+                handler.PlatformView?.SetMentionFontFamily(font);
+            }
         }
     }
 }

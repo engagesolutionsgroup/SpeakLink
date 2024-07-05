@@ -8,6 +8,7 @@ using Android.Widget;
 using AndroidX.Core.View;
 using Java.Lang;
 using LinkedIn.Spyglass.Mentions;
+using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using SpeakLink.Controls.Android;
@@ -25,7 +26,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 {
     private bool _ignoreFormattedTextChanges;
 
-    static partial void MapText(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapText(MentionEditorHandler handler, MentionEditor view)
     {
         if (handler._ignoreFormattedTextChanges)
             return;
@@ -37,7 +38,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         handler.PlatformView.Enabled = view.IsEnabled;
     }
 
-    static partial void MapFont(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapFont(MentionEditorHandler handler, MentionEditor view)
     {
         var font = view.Font;
 
@@ -49,13 +50,13 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         handler.PlatformView.SetTextSize(fontSize.Unit, fontSize.Value);
     }
 
-    static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view)
     {
         if (view.TextColor != null)
             handler.PlatformView.SetTextColor(view.TextColor.ToPlatform());
     }
 
-    static partial void MapIsMentionsEnabled(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapIsMentionsEnabled(MentionEditorHandler handler, MentionEditor view)
     {
         if (view.IsMentionsEnabled)
         {
@@ -69,17 +70,17 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         }
     }
 
-    static void MapMentionSearchCommand(MentionEditorHandler handler, MentionEditor view)
+    public static void MapMentionSearchCommand(MentionEditorHandler handler, MentionEditor view)
     {
         handler.PlatformView.MentionSearchCommand = view.MentionSearchCommand;
     }
 
-    static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view)
     {
         handler.PlatformView.IsDisplayingSuggestions = view.IsSuggestionsPopupVisible;
     }
 
-    static void MapAutoSize(MentionEditorHandler handler, MentionEditor view)
+    public static void MapAutoSize(MentionEditorHandler handler, MentionEditor view)
     {
         if (view.AutoSize == EditorAutoSizeOption.TextChanges)
             handler.PlatformView.InputType |= InputTypes.TextFlagMultiLine;
@@ -87,7 +88,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             handler.PlatformView.InputType &= ~InputTypes.TextFlagMultiLine;
     }
 
-    static partial void MapMentionInsertRequested(MentionEditorHandler handler, MentionEditor view, object? arg)
+    public static partial void MapMentionInsertRequested(MentionEditorHandler handler, MentionEditor view, object? arg)
     {
         if (arg is IMentionable mentionable)
         {
@@ -188,7 +189,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         return MeasureSpecMode.Exactly.MakeMeasureSpec(deviceSize);
     }
 
-    static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view)
+    public static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view)
     {
         if (handler._ignoreFormattedTextChanges)
             return;
@@ -324,10 +325,11 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
         int length = spannable.Length();
 
-        List<(ISpanned spannedSegment, MentionSpan? mention)> spannedSegments = ExtractSeparateSpanSegments<MentionSpan>(spannable, length);
-        
+        List<(ISpanned spannedSegment, MentionSpan? mention)> spannedSegments =
+            ExtractSeparateSpanSegments<MentionSpan>(spannable, length);
 
-        foreach (var (spannedSegment,mention) in spannedSegments)
+
+        foreach (var (spannedSegment, mention) in spannedSegments)
         {
             if (mention != null)
             {
@@ -335,41 +337,43 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             }
             else
             {
-                List<(ISpanned innerSpannedSegment, SpeakLinkLinkSpan? link)> innerSpannedSegments = 
+                List<(ISpanned innerSpannedSegment, SpeakLinkLinkSpan? link)> innerSpannedSegments =
                     ExtractSeparateSpanSegments<SpeakLinkLinkSpan>(spannedSegment, spannedSegment.Length());
-                foreach (var (innerSpannedSegment,link) in innerSpannedSegments)
+                foreach (var (innerSpannedSegment, link) in innerSpannedSegments)
                 {
                     if (link != null)
                     {
-                        var linkText = innerSpannedSegment.SubSequence(innerSpannedSegment.GetSpanStart(link), innerSpannedSegment.GetSpanEnd(link));
+                        var linkText = innerSpannedSegment.SubSequence(innerSpannedSegment.GetSpanStart(link),
+                            innerSpannedSegment.GetSpanEnd(link));
                         formattedString.Spans.Add(ToMauiLinkSpan(link, linkText));
                     }
                     else
                     {
-                        foreach(var mauiSpan in GetMauiSpansFromSpannable(innerSpannedSegment))
+                        foreach (var mauiSpan in GetMauiSpansFromSpannable(innerSpannedSegment))
                             formattedString.Spans.Add(mauiSpan);
                     }
                 }
-                
             }
         }
+
         return formattedString;
     }
 
     private LinkSpan ToMauiLinkSpan(SpeakLinkLinkSpan link, string linkText) => new(link.URL, linkText);
 
-    private static List<(ISpanned spannedSegment, T? span)> ExtractSeparateSpanSegments<T>(ISpanned spannable, int length)
+    private static List<(ISpanned spannedSegment, T? span)> ExtractSeparateSpanSegments<T>(ISpanned spannable,
+        int length)
         where T : CharacterStyle
     {
         var spannedSegments = new List<(ISpanned spannedSegment, T? mention)>();
-        
+
         var nativeMentionSpans = spannable
             .GetSpans(0, length, Class.FromType(typeof(T)))
             ?.OfType<T>()
             .OrderBy(spannable.GetSpanStart)
             .Select(x => (mention: x, start: spannable.GetSpanStart(x), end: spannable.GetSpanEnd(x)))
             .ToArray() ?? [];
-        
+
         if (nativeMentionSpans.Length == 0)
         {
             spannedSegments.Add((spannable, null));
@@ -441,10 +445,11 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                             case SpeakLinkItalicSpan:
                                 resultMauiSpan.FontAttributes |= FontAttributes.Italic;
                                 break;
-                            case { Style:TypefaceStyle.BoldItalic} :
+                            case { Style: TypefaceStyle.BoldItalic }:
                                 resultMauiSpan.FontAttributes |= FontAttributes.Bold | FontAttributes.Italic;
                                 break;
                         }
+
                         break;
                 }
             }
@@ -488,7 +493,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         MentionEditor mentionEditor)
     {
         if (typeof(View).Assembly.GetType("Microsoft.Maui.Controls.HideSoftInputOnTappedChangedManager") is
-                { } inputKeyboardManagerType
+            { } inputKeyboardManagerType
             && handler.MauiContext?.Services.GetService(inputKeyboardManagerType) is { } inputKeyboardManager
             && inputKeyboardManagerType.GetMethod("UpdateFocusForView", BindingFlags.NonPublic | BindingFlags.Instance)
                 is { } method)
@@ -543,7 +548,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     private static void MapSelectionLength(MentionEditorHandler handler, MentionEditor editor)
     {
         if (handler.PlatformView != null &&
-            System.Math.Abs(handler.PlatformView.SelectionEnd - handler.PlatformView.SelectionStart) != editor.SelectionLength)
+            System.Math.Abs(handler.PlatformView.SelectionEnd - handler.PlatformView.SelectionStart) !=
+            editor.SelectionLength)
             handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
     }
 
@@ -551,5 +557,20 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         if (handler.PlatformView != null && handler.PlatformView.SelectionStart != editor.CursorPosition)
             handler.PlatformView.SetSelectionRange(editor.CursorPosition, editor.SelectionLength);
+    }
+
+    public static partial void MapMentionFontFamily(MentionEditorHandler handler, MentionEditor editor)
+    {
+        var fontManager = handler.MauiContext?.Services?.GetService<IFontManager>();
+        if (fontManager != null)
+        {
+            if (editor.MentionFont == null)
+                handler.PlatformView.SetMentionFontFamily(null);
+            else
+            {
+                var typeface = fontManager.GetTypeface(editor.MentionFont.Value);
+                handler.PlatformView.SetMentionFontFamily(typeface);
+            }
+        }
     }
 }

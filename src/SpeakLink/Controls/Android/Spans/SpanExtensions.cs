@@ -19,5 +19,4 @@ public static class SpanExtensions
         return
             spans?.OfType<T>().ToArray() ?? Array.Empty<T>();
     }
-
 }
