@@ -14,13 +14,9 @@ public partial class RootPage : ContentPage
         InitializeComponent();
     }
 
-    private async void NavigateToMainPage(object? sender, EventArgs e)
-    {
-        await Navigation.PushAsync(new MainPage());
-    }
-    
-    private async void NavigateToRichEditorPage(object? sender, EventArgs e)
-    {
-        await Navigation.PushAsync(new RichEditorMainPage());
-    }
+    private async void NavigateToMainPage(object? sender, EventArgs e) => await Navigation.PushAsync(new MainPage());
+
+    private async void NavigateToRichEditorPage(object? sender, EventArgs e) => await Navigation.PushAsync(new RichEditorMainPage());
+
+    private void NavigateToMultilinePage(object? sender, EventArgs e) => _ = Navigation.PushAsync(new MultilinePage());
 }

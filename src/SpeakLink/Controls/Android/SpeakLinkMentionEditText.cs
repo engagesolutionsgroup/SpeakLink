@@ -18,7 +18,7 @@ namespace SpeakLink.Controls.Android;
 [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
 public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, ISuggestionsVisibilityManager
 {
-    private WordTokenizerConfig _wordTokenizer;
+    private WordTokenizerConfig _wordTokenizerConfig;
     private readonly List<string> _bucket = new();
     private SpeakLinkMentionTextWatcher? _speakLinkMentionTextWatcher;
     private bool _textWatcherAdded = false;
@@ -78,20 +78,13 @@ public class SpeakLinkMentionEditText : MentionsEditText, IQueryTokenReceiver, I
         SetupMentions(explicitChars);
     }
 
-    public void SetupMentions(string explicitChars = "@",
-        int maxNumKeywords = 2,
-        int threshold = 150)
+    public void SetupMentions(string explicitChars = "@", WordTokenizerConfig? wordTokenizerConfig = null)
     {
         _explicitChars = explicitChars;
-        _wordTokenizer = new WordTokenizerConfig
-                .Builder()
-            .SetExplicitChars(explicitChars)
-            .SetMaxNumKeywords(maxNumKeywords)
-            .SetWordBreakChars(".," + Environment.NewLine)
-            .SetThreshold(threshold)
-            .Build();
+        _wordTokenizerConfig = wordTokenizerConfig ?? new WordTokenizerConfig.Builder()
+            .SetMaxNumKeywords(2).Build();
         
-        Tokenizer = new WordTokenizer(_wordTokenizer);
+        Tokenizer = new WordTokenizer();
 
         SetQueryTokenReceiver(this);
         SetSuggestionsVisibilityManager(this);
