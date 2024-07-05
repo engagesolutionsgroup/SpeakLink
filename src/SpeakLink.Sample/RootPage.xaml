@@ -9,6 +9,7 @@
             <VerticalStackLayout HorizontalOptions="Center" Spacing="16" VerticalOptions="Center">
                 <Button Text="Mentions" Clicked="NavigateToMainPage" />
                 <Button Text="Rich Editor + Mentions" Clicked="NavigateToRichEditorPage" />
+                <Button Text="Mentions multine test" Clicked="NavigateToMultilinePage" />
             </VerticalStackLayout>
         </Grid>
     </ContentPage.Content>
