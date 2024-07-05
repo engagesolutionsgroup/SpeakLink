@@ -24,6 +24,7 @@ public class SpeakLinkMentionTextView : HKWTextView
     private string? _mentionExplicitCharacter;
 
     protected bool IgnoreTextChangeNotification;
+    private UIFont? mentionCustomFont;
 
     public event EventHandler<MentionSearchEventArgs>? MentionSearched;
     public event EventHandler<bool>? DisplaySuggestionChanged;
@@ -53,7 +54,8 @@ public class SpeakLinkMentionTextView : HKWTextView
             var mentionUnselectedAttributes = MentionUnselectedAttributes;
             MentionUnselectedAttributes = new NSMutableDictionary(mentionUnselectedAttributes)
             {
-                { UIStringAttributeKey.ForegroundColor, value ?? UIColor.Black }
+                { UIStringAttributeKey.ForegroundColor, value ?? UIColor.Black },
+                { UIStringAttributeKey.Font, mentionCustomFont ?? Font }
             };
         }
     }
@@ -71,7 +73,8 @@ public class SpeakLinkMentionTextView : HKWTextView
 
             MentionSelectedAttributes = new NSMutableDictionary(mentionSelectedAttributes)
             {
-                { UIStringAttributeKey.ForegroundColor, value ?? UIColor.Black }
+                { UIStringAttributeKey.ForegroundColor, value ?? UIColor.Black },
+                { UIStringAttributeKey.Font, mentionCustomFont ?? Font }
             };
         }
     }
@@ -105,7 +108,7 @@ public class SpeakLinkMentionTextView : HKWTextView
             MentionSearched?.Invoke(this, e);
             SendOnDisplaySuggestionsChanged(true);
         }
-        else 
+        else
             SendOnDisplaySuggestionsChanged(false);
     }
 
@@ -336,7 +339,7 @@ public class SpeakLinkMentionTextView : HKWTextView
 
     protected virtual void OnSelectionChanged()
     {
-        CursorSelectionChanged?.Invoke(this, ((int)SelectedRange.Location, 
+        CursorSelectionChanged?.Invoke(this, ((int)SelectedRange.Location,
             (int)SelectedRange.Location + (int)SelectedRange.Length));
     }
 
@@ -352,5 +355,21 @@ public class SpeakLinkMentionTextView : HKWTextView
             SelectedRange = new NSRange(editorCursorPosition, 0);
 
         SelectedRange = new NSRange(editorCursorPosition, editorCursorPosition + editorSelectionLength);
+    }
+
+    public void SetMentionFontFamily(UIFont? font)
+    {
+        this.mentionCustomFont = font;
+        var mentionUnselectedAttributes = MentionUnselectedAttributes ?? new();
+        MentionUnselectedAttributes = new NSMutableDictionary(mentionUnselectedAttributes)
+        {
+            { UIStringAttributeKey.Font, font ?? Font }
+        };
+
+        var mentionSelectedAttributes = MentionSelectedAttributes ?? new();
+        MentionSelectedAttributes = new NSMutableDictionary(mentionSelectedAttributes)
+        {
+            { UIStringAttributeKey.Font, font ?? Font }
+        };
     }
 }

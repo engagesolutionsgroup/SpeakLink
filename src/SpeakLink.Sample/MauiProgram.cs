@@ -18,6 +18,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Italic.ttf", "OpenSansItalic");
                 fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");
                 fonts.AddFont("OpenSans-BoldItalic.ttf", "OpenSansBoldItalic");
+                fonts.AddFont("atop-regular.ttf", "Atop");
             })
             .UseSpeakLink();
 

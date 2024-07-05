@@ -15,6 +15,7 @@ public partial class MentionEditorHandler
             [nameof(ITextStyle.TextColor)] = MapTextColor,
             [nameof(MentionEditor.AutoSize)] = MapAutoSize,
             [nameof(MentionEditor.Placeholder)] = MapPlaceholderText,
+            [nameof(MentionEditor.MentionFontFamily)] = MapMentionFontFamily,
             //FormattedText
             [nameof(MentionEditor.FormattedText)] = MapFormattedText,
             //Mentions
@@ -32,6 +33,7 @@ public partial class MentionEditorHandler
             [nameof(MentionEditor.SelectionLength)] = MapSelectionLength,
         };
 
+
     public static readonly CommandMapper<MentionEditor, MentionEditorHandler> CommandMapper =
         new(ViewCommandMapper)
         {
@@ -40,13 +42,14 @@ public partial class MentionEditorHandler
             [nameof(View.Unfocus)] = MapUnfocus,
         };
 
-    static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view);
-    static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view);
-    static partial void MapMentionInsertRequested(MentionEditorHandler handler, MentionEditor view, object? arg);
-    static partial void MapIsMentionsEnabled(MentionEditorHandler handler, MentionEditor view);
-    static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view);
-    static partial void MapFont(MentionEditorHandler handler, MentionEditor view);
-    static partial void MapText(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapFormattedText(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapIsSuggestionsPopupVisible(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapMentionInsertRequested(MentionEditorHandler handler, MentionEditor view, object? arg);
+    public static partial void MapIsMentionsEnabled(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapFont(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapText(MentionEditorHandler handler, MentionEditor view);
+    public static partial void MapMentionFontFamily(MentionEditorHandler handler, MentionEditor view);
 
     internal IMentionController ElementController => VirtualView;
 
