@@ -7,7 +7,6 @@ namespace SpeakLink.Link;
 
 public partial class LinkEditorDialogHandler 
 {
-    private readonly Context _context;
     private AlertDialog? _dialog;
     
     public Task<LinkDialogResult> ShowLinkDialogAsync(string? existingText, string? existingUrl)
@@ -50,11 +49,6 @@ public partial class LinkEditorDialogHandler
 
     private static (View, EditText textEditText,EditText urlEditText) CreateDialogView(Activity activity, string text, string? existingLink)
     {
-        // 1. Instantiate an AlertDialog.Builder with its constructor
-        //var view = activity.LayoutInflater.Inflate(Resource.Layout.dialog_engage_rich_editor_link, null);
-       // view!.FindViewById<EditText>(Resource.Id.engage_rich_editor_dialog_insert_link_edit)!.Text = text;
-        //view!.FindViewById<EditText>(Resource.Id.engage_rich_editor_dialog_insert_text_edit)!.Text = existingLink;
-        
         var textEditText = new EditText(activity);
         textEditText.Text = text;
         textEditText.Hint = "Text";
