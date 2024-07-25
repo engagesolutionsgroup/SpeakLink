@@ -1,4 +1,5 @@
 using SpeakLink.Controls.MaciOS.SpanStyle;
+using SpeakLink.Controls.MaciOS.SpanStyle.Paragraph;
 using SpeakLink.RichText;
 
 namespace SpeakLink.Controls.MaciOS.Toolbar;
@@ -10,6 +11,8 @@ public class PlatformToolbarState : RichEditorToolbarState, IRichEditorToolbarSt
     private readonly StrikethroughFormattedToolbarSpanStyle _strikethroughSpanStyle;
     private readonly UnderlineFormattedToolbarSpanStyle _underlineSpanStyle;
     private readonly LinkFormattedToolbarSpanStyle _linkSpanStyle;
+    private readonly ParagraphListToolbarSpanStyle _bulletListSpanStyle;
+    private readonly ParagraphListToolbarSpanStyle _numberListSpanStyle;
 
     public PlatformToolbarState(SpeakLinkRichTextView owner)
     {
@@ -17,6 +20,8 @@ public class PlatformToolbarState : RichEditorToolbarState, IRichEditorToolbarSt
         _boldSpanStyle = new BoldFormattedToolbarSpanStyle(owner);
         _strikethroughSpanStyle = new StrikethroughFormattedToolbarSpanStyle(owner);
         _underlineSpanStyle = new UnderlineFormattedToolbarSpanStyle(owner);
+        _bulletListSpanStyle = new BulletListToolbarSpanStyle(owner);
+        _numberListSpanStyle = new NumberListToolbarSpanStyle(owner);
         //_subscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSubscriptSpan>(owner, RichEditorStyle.Subscript);
         //_superscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSuperscriptSpan>(owner, RichEditorStyle.Superscript);
 
@@ -27,7 +32,9 @@ public class PlatformToolbarState : RichEditorToolbarState, IRichEditorToolbarSt
             _italicSpanStyle, 
             _strikethroughSpanStyle,
             _underlineSpanStyle,
-            _linkSpanStyle
+            _linkSpanStyle,
+            _bulletListSpanStyle,
+            _numberListSpanStyle
         ];
     }
 

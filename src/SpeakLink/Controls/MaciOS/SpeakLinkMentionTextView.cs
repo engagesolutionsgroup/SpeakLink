@@ -3,6 +3,7 @@ using System.Windows.Input;
 using CoreGraphics;
 using Foundation;
 using LinkedIn.Hakawai;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 using ObjCRuntime;
 using SpeakLink.Mention;
 using UIKit;
@@ -49,15 +50,7 @@ public class SpeakLinkMentionTextView : HKWTextView
         get => MentionUnselectedAttributes?.TryGetValue(UIStringAttributeKey.ForegroundColor, out var color) == true
             ? color as UIColor
             : null;
-        set
-        {
-            var mentionUnselectedAttributes = MentionUnselectedAttributes;
-            MentionUnselectedAttributes = new NSMutableDictionary(mentionUnselectedAttributes)
-            {
-                { UIStringAttributeKey.ForegroundColor, value ?? UIColor.Black },
-                { UIStringAttributeKey.Font, mentionCustomFont ?? Font }
-            };
-        }
+        set => UpdateMentionUnselectedAttributes(UIStringAttributeKey.ForegroundColor, value ?? TextColor ?? UIColor.Black);
     }
 
     public UIColor? MentionSelectedTextColor
@@ -65,18 +58,7 @@ public class SpeakLinkMentionTextView : HKWTextView
         get => MentionSelectedAttributes?.TryGetValue(UIStringAttributeKey.ForegroundColor, out var color) == true
             ? color as UIColor
             : UIColor.White;
-        set
-        {
-            var mentionSelectedAttributes = MentionSelectedAttributes;
-            if (mentionSelectedAttributes == null)
-                return;
-
-            MentionSelectedAttributes = new NSMutableDictionary(mentionSelectedAttributes)
-            {
-                { UIStringAttributeKey.ForegroundColor, value ?? UIColor.Black },
-                { UIStringAttributeKey.Font, mentionCustomFont ?? Font }
-            };
-        }
+        set => UpdateMentionSelectedAttributes( UIStringAttributeKey.ForegroundColor,  value ?? TextColor ?? UIColor.Black);
     }
 
     public UIColor? MentionSelectedBackgroundColor
@@ -85,20 +67,9 @@ public class SpeakLinkMentionTextView : HKWTextView
             out var color) == true
             ? color as UIColor
             : UIColor.Black;
-        set
-        {
-            var mentionSelectedAttributes = MentionSelectedAttributes;
-            if (mentionSelectedAttributes == null)
-                return;
-
-            MentionSelectedAttributes = new NSMutableDictionary(mentionSelectedAttributes)
-            {
-                {
-                    new NSString("HKWRoundedRectBackgroundAttributeName"),
-                    HKWRoundedRectBackgroundAttributeValue.ValueWithBackgroundColor(value ?? UIColor.Black)
-                }
-            };
-        }
+        set => UpdateMentionSelectedAttributes(OperatingSystem.IsIOSVersionAtLeast(15,0) ?
+                new NSString(UIStringAttributeKey.BackgroundColor) :
+                new NSString("HKWRoundedRectBackgroundAttribute"), value ?? UIColor.Clear);
     }
 
     private void SendOnMentionSearch(MentionSearchEventArgs e)
@@ -360,16 +331,29 @@ public class SpeakLinkMentionTextView : HKWTextView
     public void SetMentionFontFamily(UIFont? font)
     {
         this.mentionCustomFont = font;
-        var mentionUnselectedAttributes = MentionUnselectedAttributes ?? new();
-        MentionUnselectedAttributes = new NSMutableDictionary(mentionUnselectedAttributes)
-        {
-            { UIStringAttributeKey.Font, font ?? Font }
-        };
-
-        var mentionSelectedAttributes = MentionSelectedAttributes ?? new();
-        MentionSelectedAttributes = new NSMutableDictionary(mentionSelectedAttributes)
-        {
-            { UIStringAttributeKey.Font, font ?? Font }
-        };
+        font ??= Font;
+        
+        UpdateMentionUnselectedAttributes(UIStringAttributeKey.Font, font);
+        UpdateMentionSelectedAttributes(UIStringAttributeKey.Font, font);
+    }
+    
+    private void UpdateMentionSelectedAttributes(NSString attributeName, NSObject value)
+    {
+        var newAttributes = new NSMutableDictionary(MentionSelectedAttributes ?? new());
+        if(!newAttributes.TryAdd(attributeName, value))
+            newAttributes[attributeName] = value;
+        if (mentionCustomFont != null)
+            newAttributes[UIStringAttributeKey.Font] = mentionCustomFont;
+        MentionSelectedAttributes = new NSDictionary(newAttributes);
+    }
+    
+    private void UpdateMentionUnselectedAttributes( NSString attributeName, NSObject value)
+    {
+        var newAttributes = new NSMutableDictionary(MentionUnselectedAttributes ?? new());
+        if(!newAttributes.TryAdd(attributeName, value))
+            newAttributes[attributeName] = value;
+        if (mentionCustomFont != null)
+            newAttributes[UIStringAttributeKey.Font] = mentionCustomFont;
+        MentionUnselectedAttributes = new NSDictionary(newAttributes);
     }
 }

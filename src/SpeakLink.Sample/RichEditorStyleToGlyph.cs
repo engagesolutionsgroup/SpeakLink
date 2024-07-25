@@ -7,8 +7,7 @@ public class RichEditorStyleToGlyph : IValueConverter
 {
     private FormattedString GetFormattedString(string text, FontAttributes fontAttributes, TextDecorations textDec) =>
         new() { Spans = { new Span { Text = text, FontAttributes = fontAttributes, TextDecorations = textDec } } };
-
-
+    
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return (RichEditorStyle) value! switch
@@ -21,6 +20,8 @@ public class RichEditorStyleToGlyph : IValueConverter
             RichEditorStyle.Link => GetFormattedString("L", FontAttributes.None, TextDecorations.None),
             RichEditorStyle.Subscript => GetFormattedString("Sub", FontAttributes.None, TextDecorations.None),
             RichEditorStyle.Superscript => GetFormattedString("Sup", FontAttributes.None, TextDecorations.None),
+            RichEditorStyle.BulletList => GetFormattedString("|•", FontAttributes.None, TextDecorations.None),
+            RichEditorStyle.NumberList => GetFormattedString("|1", FontAttributes.None, TextDecorations.None),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

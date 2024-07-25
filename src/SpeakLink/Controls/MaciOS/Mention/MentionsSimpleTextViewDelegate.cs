@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Foundation;
 using ObjCRuntime;
 using UIKit;
@@ -27,6 +28,12 @@ public class MentionsSimpleTextViewDelegate : UITextViewDelegate
 
     protected internal MentionsSimpleTextViewDelegate(NativeHandle handle) : base(handle)
     {
+    }
+
+    public override bool ShouldChangeText(UITextView textView, NSRange range, string text)
+    {
+        Debug.WriteLine("ShouldChangeText");
+        return true;
     }
 
     public override void Changed(UITextView textView)

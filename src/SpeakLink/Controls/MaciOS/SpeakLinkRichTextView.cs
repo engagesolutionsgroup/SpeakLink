@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CoreGraphics;
 using Foundation;
 using ObjCRuntime;
@@ -41,7 +42,7 @@ public class SpeakLinkRichTextView : SpeakLinkMentionTextView
     {
         ToolbarState = new PlatformToolbarState(this);
     }
-
+    
     protected override void OnSelectionChanged()
     {
         base.OnSelectionChanged();
@@ -52,6 +53,6 @@ public class SpeakLinkRichTextView : SpeakLinkMentionTextView
         }
     }
 
-    internal void RaiseFormattedTextChanged() 
+    internal void RaiseFormattedTextChanged()
         => OnTextChangedDelegate(null, this.Text);
 }

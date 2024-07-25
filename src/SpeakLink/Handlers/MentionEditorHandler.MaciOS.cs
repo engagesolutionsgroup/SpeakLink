@@ -414,13 +414,9 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         var fontManager = handler.MauiContext?.Services?.GetService<IFontManager>();
         if (fontManager != null)
         {
-            if (editor.MentionFont == null)
-                handler.PlatformView.SetMentionFontFamily(null);
-            else
-            {
-                var font = fontManager.GetFont(editor.MentionFont.Value);
-                handler.PlatformView?.SetMentionFontFamily(font);
-            }
+            var font = editor.MentionFont == null ? null : fontManager.GetFont(editor.MentionFont.Value);
+            font = font != null ? font.WithSize((nfloat)editor.FontSize) : null;
+            handler.PlatformView?.SetMentionFontFamily(font);
         }
     }
 }

@@ -9,4 +9,6 @@ public enum RichEditorStyle
     Link,
     Subscript,
     Superscript,
+    BulletList,
+    NumberList
 }
