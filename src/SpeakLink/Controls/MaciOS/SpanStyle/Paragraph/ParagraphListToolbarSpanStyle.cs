@@ -8,6 +8,8 @@ public abstract class ParagraphListToolbarSpanStyle : FormattedToolbarSpanStyle
 {
     public abstract NSTextListMarkerFormats MarkerFormat { get; }
 
+    public const int IndentSize = 15;
+
     public ParagraphListToolbarSpanStyle(SpeakLinkRichTextView richTextView) :
         base(richTextView)
     {
@@ -23,9 +25,9 @@ public abstract class ParagraphListToolbarSpanStyle : FormattedToolbarSpanStyle
             {
                 result.AddAttribute(UIStringAttributeKey.ParagraphStyle, new NSMutableParagraphStyle()
                 {
-                    HeadIndent = 15f,
-                    FirstLineHeadIndent = 15f,
-                    TextLists = [new NSTextList(NSTextListMarkerFormats.Box, NSTextListOptions.PrependEnclosingMarker)]
+                    HeadIndent = IndentSize,
+                    FirstLineHeadIndent = IndentSize,
+                    TextLists = [new NSTextList(MarkerFormat, NSTextListOptions.PrependEnclosingMarker)]
                 }, inputStringRange);
             }
             else
@@ -49,30 +51,32 @@ public abstract class ParagraphListToolbarSpanStyle : FormattedToolbarSpanStyle
             if (existingParagraphStyle is { TextLists.Length: 0 })
             {
                 existingParagraphStyle.TextLists = [new NSTextList(MarkerFormat, NSTextListOptions.None)];
-                existingParagraphStyle.HeadIndent = 15f;
-                existingParagraphStyle.FirstLineHeadIndent = 15f;
+                existingParagraphStyle.HeadIndent = IndentSize;
+                existingParagraphStyle.FirstLineHeadIndent = IndentSize;
                 inputAttributes[UIStringAttributeKey.ParagraphStyle] = existingParagraphStyle;
             }
-            else if (existingParagraphStyle is { TextLists: [not null] })
+            else if (existingParagraphStyle is { TextLists: { Length: > 0 } textLists }
+                     && textLists[0].MarkerFormat != MarkerFormat)
             {
                 var defaultParagraphStyle = (NSMutableParagraphStyle)NSParagraphStyle.Default.MutableCopy();
                 defaultParagraphStyle.TextLists =
                     [new NSTextList(MarkerFormat, NSTextListOptions.None)];
-                defaultParagraphStyle.HeadIndent = 15f;
-                defaultParagraphStyle.FirstLineHeadIndent = 15f;
+                defaultParagraphStyle.HeadIndent = IndentSize;
+                defaultParagraphStyle.FirstLineHeadIndent = IndentSize;
                 inputAttributes[UIStringAttributeKey.ParagraphStyle] = defaultParagraphStyle;
             }
-            else if(existingParagraphStyle == null)
+            else if (existingParagraphStyle == null)
             {
                 var defaultParagraphStyle = (NSMutableParagraphStyle)NSParagraphStyle.Default.MutableCopy();
                 defaultParagraphStyle.TextLists =
                     [new NSTextList(MarkerFormat, NSTextListOptions.None)];
-                defaultParagraphStyle.HeadIndent = 15f;
-                defaultParagraphStyle.FirstLineHeadIndent = 15f;
+                defaultParagraphStyle.HeadIndent = IndentSize;
+                defaultParagraphStyle.FirstLineHeadIndent = IndentSize;
                 inputAttributes[UIStringAttributeKey.ParagraphStyle] = defaultParagraphStyle;
             }
         }
-        else if (existingParagraphStyle != null)
+        else if (existingParagraphStyle is { TextLists: { Length: > 0 } textLists }
+                 && textLists[0].MarkerFormat == MarkerFormat)
         {
             existingParagraphStyle.TextLists = [];
             existingParagraphStyle.HeadIndent = 0;
@@ -89,15 +93,28 @@ public abstract class ParagraphListToolbarSpanStyle : FormattedToolbarSpanStyle
             return false;
 
         bool hasList = false;
-        RichTextView.AttributedText.EnumerateAttribute(UIStringAttributeKey.ParagraphStyle, selectedRange.Value,
-            NSAttributedStringEnumeration.LongestEffectiveRangeNotRequired, Callback);
 
-        void Callback(NSObject value, NSRange range, ref bool stop)
+        if (selectedRange.Value.Length == 0)
         {
-            if (value is NSParagraphStyle paragraphStyle)
+            hasList = RichTextView.CustomTypingAttributes[UIStringAttributeKey.ParagraphStyle] is NSParagraphStyle
+                      {
+                          TextLists.Length: > 0
+                      } paragraphStyle &&
+                      paragraphStyle.TextLists[0].MarkerFormat == MarkerFormat;
+        }
+        else
+        {
+            RichTextView.AttributedText.EnumerateAttribute(UIStringAttributeKey.ParagraphStyle, selectedRange.Value,
+                NSAttributedStringEnumeration.LongestEffectiveRangeNotRequired, Callback);
+
+            void Callback(NSObject value, NSRange range, ref bool stop)
             {
-                hasList = paragraphStyle.TextLists.Length > 0;
-                stop = true;
+                if (value is NSParagraphStyle paragraphStyle)
+                {
+                    hasList = paragraphStyle.TextLists.Length > 0 &&
+                              paragraphStyle.TextLists[0].MarkerFormat == MarkerFormat;
+                    stop = true;
+                }
             }
         }
 
