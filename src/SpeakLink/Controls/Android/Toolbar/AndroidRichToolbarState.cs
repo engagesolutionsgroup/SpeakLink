@@ -13,6 +13,7 @@ public class AndroidRichToolbarState : RichEditorToolbarState, IRichEditorToolba
     private readonly InlineToolbarSpanStyle<SpeakLinkSubscriptSpan> _subscriptSpanStyle;
     private readonly InlineToolbarSpanStyle<SpeakLinkSuperscriptSpan> _superscriptSpanStyle;
     private readonly SpeakLinkToolbarLinkSpanStyle _linkSpanStyle;
+    private List<IAndroidToolbarSpanStyle> platformStyles;
 
     public AndroidRichToolbarState(SpeakLinkRichEditText owner)
     {
@@ -25,7 +26,7 @@ public class AndroidRichToolbarState : RichEditorToolbarState, IRichEditorToolba
         // _superscriptSpanStyle = new InlineToolbarSpanStyle<SpeakLinkSuperscriptSpan>(owner, RichEditorStyle.Superscript);
         _linkSpanStyle = new SpeakLinkToolbarLinkSpanStyle(owner);
 
-        Styles =
+         platformStyles =
         [
             _boldSpanStyle,
             _italicSpanStyle,
@@ -37,5 +38,17 @@ public class AndroidRichToolbarState : RichEditorToolbarState, IRichEditorToolba
         ];
     }
 
-    public override IEnumerable<IAndroidToolbarSpanStyle> Styles { get; }
+    public override void RemoveStyle(RichEditorStyle style)
+    {
+        var styleItem = Styles.FirstOrDefault(x => x.RichEditorStyle == style);
+        if (styleItem != null)
+        {
+            platformStyles.Remove(styleItem);
+            platformStyles = [..platformStyles];
+        }
+        
+        this.OnPropertyChanged(nameof(Styles));
+    }
+
+    public override IEnumerable<IAndroidToolbarSpanStyle> Styles => platformStyles;
 }

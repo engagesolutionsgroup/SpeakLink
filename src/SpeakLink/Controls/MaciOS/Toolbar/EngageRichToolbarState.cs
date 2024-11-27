@@ -10,6 +10,7 @@ public class PlatformToolbarState : RichEditorToolbarState, IRichEditorToolbarSt
     private readonly StrikethroughFormattedToolbarSpanStyle _strikethroughSpanStyle;
     private readonly UnderlineFormattedToolbarSpanStyle _underlineSpanStyle;
     private readonly LinkFormattedToolbarSpanStyle _linkSpanStyle;
+    private  List<IAppleToolbarSpanStyle> platformStyles;
 
     public PlatformToolbarState(SpeakLinkRichTextView owner)
     {
@@ -22,7 +23,7 @@ public class PlatformToolbarState : RichEditorToolbarState, IRichEditorToolbarSt
 
         _linkSpanStyle = new LinkFormattedToolbarSpanStyle(owner);
 
-        Styles = [
+        platformStyles = [
             _boldSpanStyle,
             _italicSpanStyle, 
             _strikethroughSpanStyle,
@@ -31,5 +32,19 @@ public class PlatformToolbarState : RichEditorToolbarState, IRichEditorToolbarSt
         ];
     }
 
-    public override IEnumerable<IAppleToolbarSpanStyle> Styles { get; }
+    public override void RemoveStyle(RichEditorStyle style)
+    {
+        var styleItem = Styles.FirstOrDefault(x => x.RichEditorStyle == style);
+        if (styleItem != null)
+        {
+            platformStyles.Remove(styleItem);
+            platformStyles = [..platformStyles];
+        }
+        
+        
+        OnPropertyChanged(nameof(Styles));
+        
+    }
+
+    public override IEnumerable<IAppleToolbarSpanStyle> Styles => platformStyles;
 }

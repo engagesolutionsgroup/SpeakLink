@@ -3,9 +3,13 @@ using System.Runtime.CompilerServices;
 
 namespace SpeakLink.RichText;
 
-public class RichEditorToolbarState : IRichEditorToolbarState<IToolbarSpanStyle>
+public class RichEditorToolbarState : IRichEditorToolbarState<IToolbarSpanStyle>, INotifyPropertyChanged
 {
     public virtual IEnumerable<IToolbarSpanStyle> Styles { get; } = [];
+    
+    public virtual void RemoveStyle(RichEditorStyle style)
+    {
+    }
     
     public event PropertyChangedEventHandler? PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
