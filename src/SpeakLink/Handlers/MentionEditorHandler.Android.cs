@@ -193,8 +193,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         if (handler._ignoreFormattedTextChanges)
             return;
-
-        if (!string.IsNullOrWhiteSpace(handler.PlatformView?.Text))
+        
+        if (view?.FormattedText is not null)
             handler.PlatformView.SetTextFormattedFromBinding(ConvertToSpannableText(handler, view));
     }
 
@@ -312,8 +312,8 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
                 .Build();
 
             //Force to update mentions colors
-            handler.RaiseFormattedTextChanged();
             MapFormattedText(handler, view);
+            handler.RaiseFormattedTextChanged();
         }
     }
 
