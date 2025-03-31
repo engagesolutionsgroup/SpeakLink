@@ -117,7 +117,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         RaiseFormattedTextChanged();
     }
 
-    private void RaiseFormattedTextChanged()
+    protected void RaiseFormattedTextChanged()
     {
         _ignoreFormattedTextChanges = true;
         ElementController?.SendFormattedTextChanged(GetFormattedText());
