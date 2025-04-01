@@ -21,6 +21,17 @@ public partial class RichEditorHandler
 
             if (MauiContext?.Services.GetService<ILinkEditorDialogHandler>() is { } linkEditorDialogInvoker)
                 richEditText.LinkEditorDialogHandler = linkEditorDialogInvoker;
+
+            richEditText.SpanStyleChanged += OnSpanStyleChanged;
         }
     }
+
+    protected override void DisconnectHandler(SpeakLinkMentionEditText platformView)
+    {
+        base.DisconnectHandler(platformView);
+        if(platformView is SpeakLinkRichEditText richEditText)
+            richEditText.SpanStyleChanged -= OnSpanStyleChanged;
+    }
+
+    private void OnSpanStyleChanged(object? sender, RichEditorStyle e) => RaiseFormattedTextChanged();
 }

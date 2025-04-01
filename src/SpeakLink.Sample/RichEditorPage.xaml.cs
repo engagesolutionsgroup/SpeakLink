@@ -37,8 +37,7 @@ public partial class RichEditorMainPage : ContentPage
             BottomInputLayout.TranslateTo(0, e.IsFocused ? -additionalScrollFix : 0);
         }
     }
-
-
+    
     private void HideKeyboard(object? sender, TappedEventArgs e)
     {
         if (!RichEditor.IsFocused)

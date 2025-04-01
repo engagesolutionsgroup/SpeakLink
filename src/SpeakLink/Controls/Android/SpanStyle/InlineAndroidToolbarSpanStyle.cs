@@ -39,6 +39,7 @@ public class InlineToolbarSpanStyle<T> : IAndroidToolbarSpanStyle
             ApplyStyle(ParentEditText.EditableText,
                 ParentEditText.SelectionStart,
                 ParentEditText.SelectionEnd);
+            ParentEditText.RaiseStyleChanged(RichEditorStyle);
         }
     }
 

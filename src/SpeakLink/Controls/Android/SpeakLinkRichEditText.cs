@@ -3,7 +3,6 @@ using Android.Graphics;
 using Android.Runtime;
 using Android.Text.Style;
 using Android.Util;
-using LinkedIn.Spyglass.Mentions;
 using SpeakLink.Controls.Android.Spans;
 using SpeakLink.Controls.Android.Toolbar;
 using SpeakLink.Link;
@@ -13,6 +12,8 @@ namespace SpeakLink.Controls.Android;
 
 public class SpeakLinkRichEditText : SpeakLinkMentionEditText
 {
+    public event EventHandler<RichEditorStyle> SpanStyleChanged;
+    
     private SpeakLinkRichTextWatcher _richTextWatcher;
     public AndroidRichToolbarState? ToolbarState { get; set; }
     public ILinkEditorDialogHandler LinkEditorDialogHandler { get; set; }
@@ -163,5 +164,12 @@ public class SpeakLinkRichEditText : SpeakLinkMentionEditText
                 => x.RichEditorStyle == richEditorStyle)
             is { } associatedStyleSpan)
             associatedStyleSpan.Checked = value;
+    }
+
+    public void RaiseStyleChanged(RichEditorStyle richEditorStyle)
+    {
+        _richTextWatcher.IgnoreNextTextChange(true);
+        SpanStyleChanged?.Invoke(this, richEditorStyle);
+        _richTextWatcher.IgnoreNextTextChange(false);
     }
 }
