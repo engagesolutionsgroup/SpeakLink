@@ -73,7 +73,7 @@ public partial class MentionEditor : View, IEditorController
         SelectionChanged?.Invoke(this, new(selStart, selectionLength));
     }
 
-    protected virtual void ResizeIfNeeded()
+    public virtual void ResizeIfNeeded()
     {
         if (AutoSize == EditorAutoSizeOption.TextChanges)
             InvalidateMeasure();

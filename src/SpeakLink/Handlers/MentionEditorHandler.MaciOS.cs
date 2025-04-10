@@ -23,6 +23,12 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             return;
 
         handler.PlatformView?.SetText(view.Text);
+        if (handler.VirtualView != null)
+        {
+            handler.VirtualView.ResizeIfNeeded();
+            if (string.IsNullOrEmpty(view.Text))
+                handler.VirtualView.FormattedText = null;
+        }
     }
 
     public static partial void MapFont(MentionEditorHandler handler, MentionEditor view)
