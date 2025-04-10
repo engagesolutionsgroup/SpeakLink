@@ -30,7 +30,14 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         if (handler._ignoreFormattedTextChanges)
             return;
+        
         handler.PlatformView?.SetText(view.Text);
+        if (handler.VirtualView != null)
+        {
+            handler.VirtualView.ResizeIfNeeded();
+            if (string.IsNullOrEmpty(view.Text))
+                handler.VirtualView.FormattedText = null;
+        }
     }
 
     static void MapIsEnabled(MentionEditorHandler handler, MentionEditor view)
