@@ -136,7 +136,7 @@ public partial class MentionEditor : ITextStyle, IFontElement
     protected void HandleFontChanged()
     {
         Handler?.UpdateValue(nameof(ITextStyle.Font));
-        InvalidateMeasureNonVirtual(InvalidationTrigger.MeasureChanged);
+        InvalidateMeasure();
     }
 
     private static void OnFontFamilyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -150,7 +150,7 @@ public partial class MentionEditor : ITextStyle, IFontElement
             return;
         
         visualElement.Handler?.UpdateValue(nameof(MentionFont));
-        visualElement.InvalidateMeasureNonVirtual(InvalidationTrigger.MeasureChanged);
+        visualElement.InvalidateMeasure();
     }
 
     private static void OnFontSizeChanged(BindableObject bindable, object oldValue, object newValue)

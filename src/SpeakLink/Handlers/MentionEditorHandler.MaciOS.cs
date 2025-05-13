@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Foundation;
 using LinkedIn.Hakawai;
+using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
@@ -21,7 +22,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
     {
         if (handler._ignoreFormattedTextChanges)
             return;
-
+        
         handler.PlatformView?.SetText(view.Text);
         if (handler.VirtualView != null)
         {
@@ -58,6 +59,7 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
 
     public static partial void MapTextColor(MentionEditorHandler handler, MentionEditor view)
     {
+        
         handler.PlatformView.TextColor = view.TextColor?.ToPlatform() ?? GetDefaultLabelColor();
     }
 
@@ -430,3 +432,4 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
         }
     }
 }
+
