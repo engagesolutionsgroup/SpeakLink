@@ -126,5 +126,6 @@
                 </CollectionView>
             </Border>
         </Grid>
+        <Button Text="Test" Clicked="TestClicked" VerticalOptions="End"/>
     </Grid>
 </ContentPage>

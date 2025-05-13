@@ -19,9 +19,4 @@ public class MentionsHkwMentionsCustomChooserViewDelegate : HKWMentionsCustomCho
         if (MentionSearchCommand?.CanExecute(eventArgs) ?? false)
             MentionSearchCommand!.Execute(eventArgs);
     }
-
-    public override bool EntityCanBeTrimmed(HKWMentionsEntityProtocol entity)
-    {
-        return false;
-    }
 }

@@ -33,4 +33,9 @@ public partial class MultilinePage : ContentPage
         if (e.Parameter is User user)
             MentionEditor.InsertMention(user.Id.ToString(), user.FullName);
     }
+
+    private void TestClicked(object? sender, EventArgs e)
+    {
+        this.MentionEditor.Text = string.Empty;
+    }
 }
