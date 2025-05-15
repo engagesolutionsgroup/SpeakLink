@@ -61,8 +61,6 @@ public abstract class TraitFormattedToolbarSpanStyle : FormattedToolbarSpanStyle
 
     public override void UpdateTypingAttributes(NSDictionary? typingAttributes)
     {
-         //UpdateSymbolicTraitForTypingAttribute(typingAttributes, SymbolicTrait);
-         //RichTextView.TypingAttributes = typingAttributes;
          UpdateSymbolicTraitForTypingAttribute(RichTextView.CustomTypingAttributes, SymbolicTrait);
          RichTextView.CustomTypingAttributes = RichTextView.CustomTypingAttributes;
     }
@@ -99,7 +97,6 @@ public abstract class TraitFormattedToolbarSpanStyle : FormattedToolbarSpanStyle
             return false;
 
         bool hasTrait = true;
-        var attributedText = RichTextView.AttributedText;
 
         // Loop through the characters in the selected range
         RichTextView.AttributedText.EnumerateAttributes(
