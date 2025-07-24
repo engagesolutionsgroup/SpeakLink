@@ -128,7 +128,15 @@ public partial class MentionEditor : View, IEditorController
         get => (string)GetValue(PlaceholderProperty);
         set => SetValue(PlaceholderProperty, value);
     }
-
+    
+    public static readonly BindableProperty PlaceholderTextColorProperty = BindableProperty.Create(
+        nameof(PlaceholderTextColor), typeof(Color), typeof(MentionEditor), null);
+    
+    public Color? PlaceholderTextColor
+    {
+        get => (Color?)GetValue(PlaceholderTextColorProperty);
+        set => SetValue(PlaceholderTextColorProperty, value);
+    }
 
     public static readonly BindableProperty CursorPositionProperty = BindableProperty.Create(
         nameof(CursorPosition), typeof(int), typeof(MentionEditor), 0);

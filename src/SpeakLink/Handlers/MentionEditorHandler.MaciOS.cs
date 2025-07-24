@@ -431,5 +431,13 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             }
         }
     }
+
+    public static partial void MapPlaceholderTextColor(MentionEditorHandler handler, MentionEditor view)
+    {
+        if (view?.PlaceholderTextColor?.ToPlatform() is not null)
+        {
+            handler.PlatformView.SetPlaceholderTextColor(view?.PlaceholderTextColor?.ToPlatform());
+        }
+    }
 }
 

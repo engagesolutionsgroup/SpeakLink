@@ -21,10 +21,12 @@ public class SpeakLinkMentionTextView : HKWTextView
     private bool _chooserViewVisible;
 
     private UILabel? _placeholderLabel;
+    private UIColor? _placeholderTextColor;
     private string? _mentionExplicitCharacter;
 
     protected bool IgnoreTextChangeNotification;
     private UIFont? mentionCustomFont;
+
 
     public event EventHandler<MentionSearchEventArgs>? MentionSearched;
     public event EventHandler<bool>? DisplaySuggestionChanged;
@@ -284,7 +286,7 @@ public class SpeakLinkMentionTextView : HKWTextView
         new()
         {
             Font = Font ?? UIFont.PreferredCaption1,
-            TextColor = UIColor.LightGray
+            TextColor = _placeholderTextColor ?? UIColor.LightGray
         };
 
     public void SetPlaceholderFont(UIFont newFont)
@@ -371,5 +373,12 @@ public class SpeakLinkMentionTextView : HKWTextView
         {
             { UIStringAttributeKey.Font, font ?? Font }
         };
+    }
+
+    public void SetPlaceholderTextColor(UIColor? placeholderTextColor)
+    {
+        _placeholderTextColor = placeholderTextColor;
+        if (_placeholderLabel != null && placeholderTextColor != null)
+            _placeholderLabel.TextColor = placeholderTextColor;
     }
 }

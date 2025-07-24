@@ -8,12 +8,12 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-		<MauiVersion>9.0.60</MauiVersion>
+		<MauiVersion>9.0.90</MauiVersion>
 	</PropertyGroup>
 	<PropertyGroup>
 		<!-- NuGet Package properties -->
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>0.6.12</Version>
+		<Version>0.6.13</Version>
 		<Authors>Artem Valieiev</Authors>
 		<Product>SpeakLink</Product>
 		<Description>The SpeakLink MentionEditor is a extended mention control for .NET MAUI applications. It provides an enriched text editing experience with support for '@' mentions or any other trigger character, similar to popular social media platforms. The MentionEditor control is highly customizable, allowing developers to easily integrate and adapt it to their specific application needs. There is also RichEditor that supports mentions as described above and support for bold/italic/underline/strikethrough formatting.</Description>

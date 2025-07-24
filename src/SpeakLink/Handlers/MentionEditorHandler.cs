@@ -31,6 +31,7 @@ public partial class MentionEditorHandler
             //Cursor
             [nameof(MentionEditor.CursorPosition)] = MapCursorPosition,
             [nameof(MentionEditor.SelectionLength)] = MapSelectionLength,
+            [nameof(MentionEditor.PlaceholderTextColor)] = MapPlaceholderTextColor,
         };
 
 
@@ -50,6 +51,8 @@ public partial class MentionEditorHandler
     public static partial void MapFont(MentionEditorHandler handler, MentionEditor view);
     public static partial void MapText(MentionEditorHandler handler, MentionEditor view);
     public static partial void MapMentionFontFamily(MentionEditorHandler handler, MentionEditor view);
+    
+    public static partial void MapPlaceholderTextColor(MentionEditorHandler handler, MentionEditor view);
 
     internal IMentionController ElementController => VirtualView;
 

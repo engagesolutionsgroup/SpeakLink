@@ -580,4 +580,10 @@ public partial class MentionEditorHandler : ViewHandler<MentionEditor, SpeakLink
             }
         }
     }
+
+    public static partial void MapPlaceholderTextColor(MentionEditorHandler handler, MentionEditor view)
+    {
+        if(view.PlaceholderTextColor is not null)
+            handler.PlatformView.SetHintTextColor(view.PlaceholderTextColor?.ToDefaultColorStateList());
+    }
 }
